@@ -38,6 +38,7 @@ npx sequelize-cli db:seed:all
 ```
 
 ## 專案結構
+```
 D:.
 ├─config               # 設定檔資料夾
 ├─middlewares          # 中介軟體資料夾
@@ -49,5 +50,6 @@ D:.
     ├─models           # 資料模型，定義資料庫結構和關聯
     ├─routes           # 路由設定，定義API端點
     └─views            # 視圖模板，用於渲染前端頁面
+```
 
 
