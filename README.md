@@ -10,31 +10,33 @@
 ```
 git clone [repository_link]
 ```
-3. 進入項目目錄：
+2. 進入項目目錄：
 ```
-cd mystock
+cd FinalReportStockAnalyze
 ```
-4. 安裝依賴項：
+3. 安裝依賴項：
 ```
 npm install
 ```
-5. 複製 .env.example 文件並重命名為 .env，然後根據您的環境配置填寫適當的值。
-6. 啟動伺服器：
+4. 複製 .env.example 文件並重命名為 .env，然後根據您的環境配置填寫適當的值。
+5. 啟動伺服器：
 ```
-npm start
+node app.js
 ```
 ## 使用 Sequelize
-1. 創建資料庫：
+1. 確保 Node.js 應用程式中載入 .env 檔案的環境變數
 ```
-npx sequelize-cli db:create
+npm install dotenv
 ```
-2. 執行遷移以創建表格：
+2. 創建資料庫：
+3. 檢查資料庫連線
+```
+cd /database
+node testConnection.js
+```
+4. 執行遷移以創建表格：
 ```
 npx sequelize-cli db:migrate
-```
-3. 如果有種子數據，執行以下命令來填充資料庫：
-```
-npx sequelize-cli db:seed:all
 ```
 
 ## 專案結構
