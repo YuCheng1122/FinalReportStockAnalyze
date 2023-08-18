@@ -1,10 +1,9 @@
-// wppRoutes.js
 const express = require("express");
 const router = express.Router();
 
 router.get("/WPP", (req, res) => {
   const data = {
-    percentage: 75.5, // 這只是一個示例值，您可以根據需要更改
+    percentage: 75.5,
     details: {
       description: "This is a detailed description of the WPP data.",
       source: "Data source name or URL",
