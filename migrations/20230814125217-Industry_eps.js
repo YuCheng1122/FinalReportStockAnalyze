@@ -1,70 +1,70 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Industry_EPS', {
+    await queryInterface.createTable("Industry_EPS", {
       industry_eps_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       stock_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Stocks',
-          key: 'stock_id'
+          model: "Stock",
+          key: "stock_id",
         },
-        allowNull: true
+        allowNull: true,
       },
       date: {
         type: Sequelize.DATEONLY,
-        allowNull: true
+        allowNull: true,
       },
       year: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       quarter: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       v_p: {
         type: Sequelize.DECIMAL(10, 2),
-        allowNull: true
+        allowNull: true,
       },
       b_p: {
         type: Sequelize.DECIMAL(10, 2),
-        allowNull: true
+        allowNull: true,
       },
       revenue: {
         type: Sequelize.DECIMAL(15, 2),
-        allowNull: true
+        allowNull: true,
       },
       profit: {
         type: Sequelize.DECIMAL(15, 2),
-        allowNull: true
+        allowNull: true,
       },
       income_expenses: {
         type: Sequelize.DECIMAL(15, 2),
-        allowNull: true
+        allowNull: true,
       },
       profit_after_price: {
         type: Sequelize.DECIMAL(15, 2),
-        allowNull: true
+        allowNull: true,
       },
       create_date: {
         type: Sequelize.DATE,
-        allowNull: true
+        allowNull: true,
       },
       update_date: {
         type: Sequelize.DATE,
-        allowNull: true
-      }
+        allowNull: true,
+      },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Industry_EPS');
-  }
+    await queryInterface.dropTable("Industry_EPS");
+  },
 };

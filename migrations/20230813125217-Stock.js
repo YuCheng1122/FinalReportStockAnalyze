@@ -1,26 +1,26 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Stocks', {
+    await queryInterface.createTable("Stock", {
       stock_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       name: {
         type: Sequelize.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       industry: {
         type: Sequelize.STRING(255),
-        allowNull: true
-      }
+        allowNull: true,
+      },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Stocks');
-  }
+    await queryInterface.dropTable("Stocks");
+  },
 };
