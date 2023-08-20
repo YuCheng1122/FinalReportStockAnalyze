@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 const WPPRoute = require("./src/routes/weatherPredict");
 
 // ... 其他代碼

@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.DECIMAL(5,2),
         allowNull: false,
       },
       temperature: {

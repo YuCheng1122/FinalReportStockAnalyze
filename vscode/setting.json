@@ -1,0 +1,40 @@
+{
+  "editor.tabSize": 2,
+  "editor.fontSize": 10,
+  "html.format.contentUnformatted": "",
+  "files.autoSave": "afterDelay",
+  "files.insertFinalNewline": true,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "workbench.startupEditor": "none",
+  "editor.formatOnSave": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "git.openRepositoryInParentFolders": "never",
+  "[typescript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "editor.wordWrap": "on",
+  "workbench.editor.enablePreview": false,
+  "search.followSymlinks": false,
+  "editor.minimap.enabled": false,
+  "editor.lineNumbers": "on",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "eslint.codeActionsOnSave": ["source.organizeImports", "source.fixAll"],
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
