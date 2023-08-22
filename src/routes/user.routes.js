@@ -1,4 +1,4 @@
-const router = require("express").Router();
+const router = require('express').Router()
 
 /**
  * 註冊會員
@@ -10,7 +10,7 @@ const router = require("express").Router();
  *  password: string
  * }
  */
-router.post("/register", (req, res) => {});
+router.post('/register', (req, res) => {})
 
 /**
  * 登入會員
@@ -25,4 +25,31 @@ router.post("/register", (req, res) => {});
  *  token: string
  * }
  */
-router.post("/login", (req, res) => {});
+router.post('/login', (req, res) => {})
+
+/**
+ * 修改密碼
+ *
+ * @route POST /user/update/password
+ * @param {object} - {
+ *  password: string
+ * }
+ */
+router.post('/update/password', (req, res) => {})
+
+/**
+ * 獲取點燈記錄
+ *
+ * @route GET /user/lightup/history
+ * @return {object} - {
+ *  create_date: string,
+ *  data: {
+ *    stock_name: string
+ *  }[]
+ * }[]
+ */
+router.get('/lightup/history', (req, res) => {})
+
+// 自選股相關API
+
+module.exports = router
