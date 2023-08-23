@@ -1,8 +1,15 @@
 const puppeteer = require('puppeteer')
-const weatherCraw = require('../crawlers/weather')
 const path = require('path')
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const mysql = require('mysql2/promise')
+
+const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_DIALECT } = process.env
+const connectionConfig = {
+  host: DB_HOST,
+  user: DB_USERNAME,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+}
 
 function generateDateArray(startDate, endDate) {
   const dateArray = []
@@ -42,7 +49,7 @@ async function scrapeWebsiteData(date) {
         for (let i = 3; i < items.length; i += 1) {
           let td_array = items[i].children
           res.push({
-            day: date + '-' + td_array[0].innerText.trim(),
+            date: date + '-' + td_array[0].innerText.trim(),
             status: Number(td_array[34].innerText.trim()) ? parseFloat(td_array[34].innerText.trim()) : 0.0,
             temperature: Number(td_array[7].innerText.trim()) ? parseFloat(td_array[7].innerText.trim()) : 0.0,
             humidity: Number(td_array[13].innerText.trim()) ? parseFloat(td_array[13].innerText.trim()) : 0.0,
@@ -65,8 +72,10 @@ async function scrapeWebsiteData(date) {
 async function insertData() {
   let startDate = '2018-01'
   let endDate = '2023-07'
+
   let dateArray = generateDateArray(startDate, endDate)
   let res = []
+  console.log(dateArray)
   for (let date of dateArray) {
     let data = await scrapeWebsiteData(date)
     delay(2000)
@@ -75,21 +84,21 @@ async function insertData() {
   return res
 }
 
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST } = process.env
-const connectionConfig = {
-  host: DB_HOST,
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
 const insertWeatherData = async () => {
   try {
     const connection = await mysql.createConnection(connectionConfig)
     let weather_data_array = await insertData()
-    console.log(weather_data_array)
-    const sql = `INSERT INTO weather VALUES(date,status,temperature,humidity,precipitation)`
-    await connection.execute(sql, [weather_data_array])
+    let sql = 'INSERT INTO weather(date,status,temperature,humidity,precipitation) VALUES (?,?,?,?,?)'
+    for (let i of weather_data_array) {
+      await connection.query(sql, [i.date, i.status, i.temperature, i.humidity, i.precipitation], (error, result) => {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log('successfully !')
+        }
+      })
+    }
+    connection.close()
   } catch (error) {
     console.log(error)
   }
