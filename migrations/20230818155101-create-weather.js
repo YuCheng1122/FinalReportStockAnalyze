@@ -1,8 +1,8 @@
-"use strict";
+'use strict'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Weather", {
+    await queryInterface.createTable('Weather', {
       weather_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.DECIMAL(5,2),
+        type: Sequelize.DECIMAL(5, 2),
         allowNull: false,
       },
       temperature: {
@@ -31,18 +31,16 @@ module.exports = {
       },
       create_date: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       update_date: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
       },
-    });
+    })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Weather");
+    await queryInterface.dropTable('Weather')
   },
-};
+}
