@@ -52,7 +52,7 @@ router.get('/base/analysis/1', (req, res) => {})
 router.get('/base/analysis/2', (req, res) => {})
 
 /**
- * 回14日均線+DI/DI參數(14-day moving average + DI/DI)
+ * 回傳14日均線+DI/DI參數(14-day moving average + DI/DI)
  *
  * @route GET /api/stock/base/analysis/3
  * @return {object} - {
