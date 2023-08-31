@@ -34,7 +34,7 @@ function delay(ms) {
 }
 
 async function scrapeWebsiteData(date) {
-  const baseUrl = `https://e-service.cwb.gov.tw/HistoryDataQuery/MonthDataController.do?command=viewMain&station=466910&stname=%25E9%259E%258D%25E9%2583%25A8&datepicker=${date}&altitude=837.6m`
+  const baseUrl = `https://e-service.cwb.gov.tw/HistoryDataQuery/MonthDataController.do?command=viewMain&station=466920&stname=%25E8%2587%25BA%25E5%258C%2597&datepicker=${date}&altitude=5.3m`
 
   try {
     const browser = await puppeteer.launch({
