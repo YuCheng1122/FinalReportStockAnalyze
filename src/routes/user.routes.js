@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const cotroll = require('../controllers')
 
 /**
  * 註冊會員
@@ -10,7 +11,18 @@ const router = require('express').Router()
  *  password: string
  * }
  */
-router.post('/register', (req, res) => {})
+router.post('/register', async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let insertValues = req.body
+    await cotroll.userControll.createUser(insertValues)
+    response_data.success = true
+  } catch (error) {
+    console.log(error.message)
+    response_data.errorMessage = 'CreateUser function have some error'
+  }
+  res.status(200).send(response_data)
+})
 
 /**
  * 登入會員
@@ -22,10 +34,23 @@ router.post('/register', (req, res) => {})
  * }
  * @returns {object} - {
  *  user_id: number,
+ *  email: string,
  *  token: string
  * }
  */
-router.post('/login', (req, res) => {})
+router.post('/login', async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let insertValues = req.body
+    let result = await cotroll.userControll.loginUser(insertValues)
+    response_data.success = true
+    response_data.data = result
+  } catch (error) {
+    console.log(error.message)
+    response_data.errorMessage = error.message
+  }
+  res.status(200).send(response_data)
+})
 
 /**
  * 修改密碼
