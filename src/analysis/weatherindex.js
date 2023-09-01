@@ -1,3 +1,4 @@
+//天氣和大盤指數的分析，有相關係數、月平均交易量、顯著水準、異常值。
 const mysql = require('mysql');
 const path = require('path');
 require('dotenv').config({
@@ -19,7 +20,7 @@ const connection = mysql.createConnection({
   collation: 'utf8mb4_unicode_ci',
 });
 
-function pearsonCorrelation(x, y) {
+function pearsonCorrelation(x, y, significanceLevel = 0.05) {
   const n = x.length;
   let sumX = 0;
   let sumY = 0;
@@ -40,12 +41,15 @@ function pearsonCorrelation(x, y) {
 
   if (denominator === 0) return 0;
 
-  return numerator / denominator;
+  const correlation = numerator / denominator;
+  const isSignificant = Math.abs(correlation) > significanceLevel;
+
+  console.log(`Correlation: ${correlation}, Significance Level: ${significanceLevel}, Is Significant: ${isSignificant}`);
+  return correlation;
 }
 
 const doQueries = async () => {
   try {
-    // Fetch daily price and precipitation
     const [priceResults, precipitationResults] = await Promise.all([
       new Promise((resolve, reject) => {
         connection.query('SELECT date, price FROM fmtqik', (err, results) => {
@@ -61,10 +65,9 @@ const doQueries = async () => {
       })
     ]);
 
-    // Perform correlation analysis
     const priceData = priceResults.map(row => row.price);
     const precipitationData = precipitationResults.map(row => row.precipitation);
-    const correlation = pearsonCorrelation(priceData, precipitationData);
+    const correlation = pearsonCorrelation(priceData, precipitationData, 0.05);
     console.log('Correlation between daily price and precipitation:', correlation);
 
     // Trend Analysis
