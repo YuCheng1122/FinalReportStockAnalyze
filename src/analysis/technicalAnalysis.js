@@ -1,3 +1,5 @@
+//目前有的五個技術分析，MA、EMA、MACD、RSI、KD
+
 const mysql = require('mysql')
 const path = require('path')
 require('dotenv').config({
