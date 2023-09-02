@@ -1,8 +1,8 @@
-"use strict";
+'use strict'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("stock_day_all", {
+    await queryInterface.createTable('stock_day_all', {
       stock_day_all_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,10 +12,14 @@ module.exports = {
       stock_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Stock",
-          key: "stock_id",
+          model: 'Stock',
+          key: 'stock_id',
         },
         allowNull: true,
+      },
+      date: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       trade_volume: {
         type: Sequelize.BIGINT,
@@ -57,10 +61,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
-    });
+    })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("stock_day_all");
+    await queryInterface.dropTable('stock_day_all')
   },
-};
+}
