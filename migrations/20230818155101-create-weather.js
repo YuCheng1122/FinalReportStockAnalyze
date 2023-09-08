@@ -31,21 +31,13 @@ module.exports = {
       },
       create_date: {
         type: Sequelize.DATE,
-<<<<<<< HEAD
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      },
-      update_date: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-=======
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
->>>>>>> 5732aa4b18d72bd91b254a7c42358eb0e97fc3e5
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
