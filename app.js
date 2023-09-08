@@ -3,7 +3,6 @@ const express = require('express')
 const app = express()
 const PORT = 8080
 const routes = require('./src/routes')
-const WPPRoute = require('./src/routes/weatherPredict')
 
 // ... 其他代碼
 
@@ -11,7 +10,7 @@ const WPPRoute = require('./src/routes/weatherPredict')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/user', routes.userRoutes)
-app.use(WPPRoute)
+app.use('/api/weather', routes.weatherRedictRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`)

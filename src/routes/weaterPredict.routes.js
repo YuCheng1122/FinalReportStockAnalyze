@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const { weatherController } = require('../controllers/index')
 
 /**
  * 預測明日股價
@@ -59,5 +60,82 @@ router.get('/predict/week/type', (req, res) => {})
  * }
  */
 router.get('/predict/stockmarket/:time/:type', (req, res) => {})
+
+/**
+ * 回歸分析
+ *
+ * @route GET api/weather/linear/regression/:independent/:dependent
+ * @return {object} - {
+ *  'slope': number,
+ *  'intercept': number
+ * }
+ */
+router.get('/linear/regression/:independent/:dependent', async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let independent = req.params.independent
+    let dependent = req.params.dependent
+
+    let result = await weatherController.weahterRegression(independent, dependent)
+    response_data.data = result
+    response_data.success = true
+  } catch (error) {
+    console.log(error)
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
+
+/**
+ * 核回歸分析
+ *
+ * @route GET api/weather/automic/regression/:independent/:dependent
+ * @return {object} - {
+ *  predicted_number: number
+ * }
+ */
+router.get('/automic/regression/:independent/:dependent', async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let independent = req.params.independent
+    let dependent = req.params.dependent
+    await weatherController.weatherAutomicRegression(independent, dependent)
+    response_data.success = true
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
+
+/**
+ * 相關係數分析
+ * 
+ * 
+ * 
+ */
+
+
+/**
+ * 主成分分析
+ * 
+ * 
+ */
+
+
+/**
+ * 貝葉斯回歸
+ * 
+ * 
+ */
+
+
+/**
+ * 
+ * 
+ * 
+ */
+
+
+
 
 module.exports = router

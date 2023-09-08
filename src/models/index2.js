@@ -1,3 +1,5 @@
 module.exports = {
   userModels: require('./user.models'),
+  weatherModels: require('./weather.models'),
+  fmtqikModels: require('./fmtqik.models')
 }

@@ -18,10 +18,12 @@
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "ml-matrix": "^6.10.4",
     "mysql": "^2.18.1",
     "mysql2": "^3.6.0",
     "puppeteer": "^21.0.3",
-    "sequelize": "^6.32.1"
+    "sequelize": "^6.32.1",
+    "simple-statistics": "^7.8.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",

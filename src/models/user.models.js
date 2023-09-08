@@ -19,6 +19,7 @@ const insertUser = async (insertValues) => {
     let sql = 'INSERT INTO user SET ?'
     db.query(sql, insertValues, (error, result) => {
       if (error) {
+        console.log(error)
         reject({ message: `/src/user.models.js insertUser have some error, ${error.message}` })
         return
       }
