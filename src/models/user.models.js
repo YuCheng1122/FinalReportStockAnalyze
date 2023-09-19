@@ -44,4 +44,21 @@ const selectUser = async (email) => {
   })
 }
 
-module.exports = { insertUser, selectUser }
+const updatePassword = async (user_id, hashPassword) => {
+  return new Promise((resolve, reject) => {
+    
+    let sql = 'UPDATE user SET PASSWORD = ? WHERE user_id = ?'
+    db.query(sql, [hashPassword,user_id], (error, result) => {
+      if (error) {
+        reject({ message: `/src/user.models.js updatePassword have some error, ${error.message}` })
+        return
+      } else if (result.length === 0) {
+        reject({ message: 'No search user email' })
+        return
+      }
+      resolve(result[0])
+    })
+  })
+}
+
+module.exports = { insertUser, selectUser, updatePassword }

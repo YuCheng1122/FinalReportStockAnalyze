@@ -42,4 +42,32 @@ const selectWeatherWithFmtqik = () => {
   })
 }
 
-module.exports = { selectTemper, selectWeatherWithFmtqik }
+const selectWeatherWithType = (condition, time) => {
+  return new Promise((resolve, reject) => {
+    let sql = `SELECT COUNT(*) AS count FROM fmtqik AS a JOIN fmtqik AS b ON a.f_m_id = b.f_m_id + ${time} JOIN weather AS w ON a.date = w.date WHERE a.price > b.price AND ${condition}`
+    db.query(sql, (error, results) => {
+      if (error) {
+        console.log(error)
+        reject({ message: `/src/weather.models.js selectWeatherWithType have some error, ${error.message}` })
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+const selectWeatherCount = (condition) => {
+  return new Promise((resolve, reject) => {
+    let sql = `SELECT COUNT(*) as count FROM weather w JOIN fmtqik f ON w.date = f.date WHERE ${condition}`
+    db.query(sql, (error, results) => {
+      if (error) {
+        console.log(error)
+        reject({ message: `/src/weather.models.js selectWeatherCount have some error, ${error.message}` })
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+module.exports = { selectTemper, selectWeatherWithFmtqik, selectWeatherWithType, selectWeatherCount }

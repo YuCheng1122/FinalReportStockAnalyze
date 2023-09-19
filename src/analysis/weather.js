@@ -2,6 +2,36 @@ const { Matrix, solve } = require('ml-matrix')
 const { weatherModels, fmtqikModels } = require('../models/index2')
 
 // 相關係數
+const correlationCoefficient = (independent, dependent) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const mapping = {
+        fmtqik: weatherModels.selectWeatherWithFmtqik,
+      }
+      let datas = await mapping[dependent]()
+      let a = datas.map((item) => Number(item[independent]))
+      let b = datas.map((item) => Number(item.price))
+
+      const minlength = Math.min(a.length, b.length)
+      let aa = a.reduce((acc, val) => acc + val) / minlength
+      let ab = b.reduce((acc, val) => acc + val) / minlength
+
+      let vara = a.reduce((acc, val) => acc + Math.pow(val - aa, 2), 0) / (minlength - 1)
+      let varb = b.reduce((acc, val) => acc + Math.pow(val - ab, 2), 0) / (minlength - 1)
+      let cov = a.reduce((acc, val, i) => acc + (val - aa) * (b[i] - ab), 0) / (minlength - 1)
+
+      vara = vara.toFixed(4)
+      varb = varb.toFixed(4)
+      cov.toFixed(4)
+      let result = cov / (Math.sqrt(vara) * Math.sqrt(varb))
+      result = result.toFixed(4)
+      resolve({ cc: result })
+    } catch (error) {
+      reject({ message: `Error: ${error}` })
+      console.log(error)
+    }
+  })
+}
 
 // 回歸分析，目前用大盤指數分析
 const simpleLinearRegression = (independent, dependent) => {
@@ -82,4 +112,4 @@ const atomicRegression = (independent, dependent) => {
   })
 }
 
-module.exports = { simpleLinearRegression, atomicRegression }
+module.exports = { simpleLinearRegression, atomicRegression, correlationCoefficient }

@@ -1,7 +1,7 @@
 const models = require('../models/index2')
 const bcrypt = require('bcrypt')
 
-const createUser = async (insertValues) => {
+const createUser = (insertValues) => {
   return new Promise(async (resolve, reject) => {
     try {
       let { name, email, password } = insertValues
@@ -14,7 +14,7 @@ const createUser = async (insertValues) => {
   })
 }
 
-const loginUser = async (insertValues) => {
+const loginUser = (insertValues) => {
   return new Promise(async (resolve, reject) => {
     try {
       let { email, password } = insertValues
@@ -30,4 +30,18 @@ const loginUser = async (insertValues) => {
   })
 }
 
-module.exports = { createUser, loginUser }
+const updatePassword = (user_id, insertValues) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let { password } = insertValues
+      let hashPassword = await bcrypt.hash(password, 10)
+      console.log(user_id, hashPassword)
+      await models.userModels.updatePassword(user_id, hashPassword)
+      resolve()
+    } catch (error) {
+      reject({ message: `Error: ${error.message}` })
+    }
+  })
+}
+
+module.exports = { createUser, loginUser, updatePassword }

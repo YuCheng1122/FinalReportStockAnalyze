@@ -60,7 +60,19 @@ router.post('/login', async (req, res) => {
  *  password: string
  * }
  */
-router.post('/update/password', (req, res) => {})
+router.patch('/update/password', async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let insertValues = req.body
+    let user_id = 2
+    await cotroll.userControll.updatePassword(user_id, insertValues)
+    response_data.success = true
+  } catch (error) {
+    console.log(error.message)
+    response_data.errorMessage = error.message
+  }
+  res.status(200).send(response_data)
+})
 
 /**
  * 獲取點燈記錄
