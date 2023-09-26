@@ -1,6 +1,11 @@
 const router = require('express').Router()
 const cotroll = require('../controllers')
 
+const usermiddleware = (req, res, next) => {
+  req.user_id = 2
+  next()
+}
+
 /**
  * 註冊會員
  *
@@ -90,7 +95,7 @@ router.get('/lightup/history', (req, res) => {})
 /**
  * 獲取目前用戶的投資組合
  *
- * @route GET /api/user/getTeam
+ * @route GET /api/user/getGroup
  * @return {object} - {
  *  team_name: string,
  *  data: {
@@ -106,58 +111,130 @@ router.get('/lightup/history', (req, res) => {})
  *  }[]
  * }[]
  */
-router.get('/getTeam', (req, res) => {})
+router.get('/getGroup', usermiddleware, async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let user_id = req.user_id
+    let result = await cotroll.userControll.getGroup(user_id)
+    response_data.success = true
+    response_data.data = result
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
 
+// 晚點補一個將已有的預設投資組合作設置與刪除
 /**
  * 新增投資組合
  *
- * @route POST /api/user/createTeam
+ * @route POST /api/user/createGroup
  * @param {object} - {
+ *  stock_id_array: array
  *  team_name: string
  * }
  */
-router.post('/createTeam', (req, res) => {})
+router.post('/createGroup', usermiddleware, async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let user_id = req.user_id
+    let { group_name, stock_id_array } = req.body
+    await cotroll.userControll.createGroup(user_id, group_name, stock_id_array)
+    response_data.success = true
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
 
 /**
  * 刪除投資組合(hard delete)
  *
- * @route DELETE /api/user/deleteTeam/team_id
- * @param {string} - team_id
+ * @route DELETE /api/user/deleteGroup
+ * @param {string} - group_name
  */
-router.delete('/deleteTeam/:team_id', (req, res) => {})
+router.delete('/deleteGroup', usermiddleware, async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let group_name = req.body.group_name
+    let user_id = req.user_id
+    await cotroll.userControll.deleteGroup(user_id, group_name)
+    response_data.success = true
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
 
 /**
  * 更改投資組合名稱
  *
- * @route PATCH /api/user/updateTeam/team_id
- * @param {string} - team_id
- */
-router.patch('/updateTeam/:team_id', (req, res) => {})
-
-/**
- * 新增股票到投資組合裡
- *
- * @route POST /api/user/insertStock
+ * @route PATCH /api/user/updateGroup
  * @param {object} - {
- *  team_id: number,
- *  stock_id_array: {
- *    stock_id: number
- *  }[]
+ *  old_group_name: string,
+ *  new_group_name: string,
+ *  stock_id_array: array
  * }
  */
-router.post('/insertStock', (req, res) => {})
+router.patch('/updateGroup', usermiddleware, async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let user_id = req.user_id
+    let old_group_name = req.body.old_group_name
+    let new_group_name = req.body.new_group_name
+    let stock_id_array = req.body.stock_id_array
+    await cotroll.userControll.updateGroup(user_id, old_group_name, new_group_name, stock_id_array)
+    response_data.success = true
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
 
 /**
- * 刪除投資組合內的股票(hard delete)
+ * 獲取所有產業別底下股票代號
  *
- * @route DELETE /api/user/deleteStock
- * @param {object} - {
- *  team_id: number,
- *  stock_id_array: {
- *    stock_id: number
+ * @route GET /api/user/all/industry/stock
+ * @return {object} - {
+ *  industry: string,
+ *  data: {
+ *    stock_id: number,
+ *    name: string,
+ *    industry: string
  *  }[]
+ * }[]
+ */
+router.get('/all/industry/stock', usermiddleware, async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let result = await cotroll.userControll.getAllIndustryStock()
+    response_data.data = result
+    response_data.success = true
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
+
+/**
+ * 設置預設投資組合
+ *
+ * @route PATCH /api/user/set/default/combo
+ * @param {object} - {
+ *  group_name: string
  * }
  */
-router.delete('/deleteStock', (req, res) => {})
+router.patch('/set/default/combo', usermiddleware, async (req, res) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try {
+    let user_id = req.user_id
+    let group_name = req.body.group_name
+    await cotroll.userControll.setDefaultCombo(user_id, group_name)
+    response_data.success = true
+  } catch (error) {
+    response_data.errorMessage = error.message
+  }
+  return res.status(200).send(response_data)
+})
 
 module.exports = router
