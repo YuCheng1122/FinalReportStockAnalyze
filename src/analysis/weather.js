@@ -1,5 +1,6 @@
 const { Matrix, solve } = require('ml-matrix')
 const { weatherModels, fmtqikModels } = require('../models/index2')
+const { ControllerError } = require('../../error_classes')
 
 // 相關係數
 const correlationCoefficient = (independent, dependent) => {
@@ -27,13 +28,12 @@ const correlationCoefficient = (independent, dependent) => {
       result = result.toFixed(4)
       resolve({ cc: result })
     } catch (error) {
-      reject({ message: `Error: ${error}` })
-      console.log(error)
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
 
-// 回歸分析，目前用大盤指數分析
+// 回歸分析
 const simpleLinearRegression = (independent, dependent) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -68,8 +68,7 @@ const simpleLinearRegression = (independent, dependent) => {
       let b = average_y - m * average_x
       resolve({ '截距:': b, '斜率: ': m })
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
-      console.log(error)
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -103,11 +102,10 @@ const atomicRegression = (independent, dependent) => {
 
       // 求出w後，再呼叫預測的independent的值去做dependent的預測
       // 公式: y = sum_{i=1}^權重陣列長度 wik(x_i, x)
-      console.log(w)
+      console.log(y)
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
-      console.log(error)
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }

@@ -1,5 +1,6 @@
 const models = require('../models/index2')
 const bcrypt = require('bcrypt')
+const { ControllerError, SqlError } = require('../../error_classes')
 
 const createUser = (insertValues) => {
   return new Promise(async (resolve, reject) => {
@@ -9,7 +10,11 @@ const createUser = (insertValues) => {
       await models.userModels.insertUser({ name, email, password: hashPassword })
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      if (error instanceof SqlError) {
+        reject(error)
+      } else {
+        reject(new ControllerError(error))
+      }
     }
   })
 }
@@ -19,13 +24,16 @@ const loginUser = (insertValues) => {
     try {
       let { email, password } = insertValues
       let userData = await models.userModels.selectUser(email)
-      let valid = await bcrypt.compare(password, userData.password)
-      if (!valid) {
-        throw new Error('Password is not correct')
+      if (userData.length === 0) {
+        throw new ControllerError(new Error('Email is not correct.'), 2)
       }
-      resolve({ user_id: userData.user_id, email: userData.email })
+      let valid = await bcrypt.compare(password, userData[0].password)
+      if (!valid) {
+        throw new ControllerError(new Error('Password is not correct.'), 2)
+      }
+      resolve({ user_id: userData[0].user_id, email: userData[0].email })
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' || error.name === 'ControllerError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -35,11 +43,10 @@ const updatePassword = (user_id, insertValues) => {
     try {
       let { password } = insertValues
       let hashPassword = await bcrypt.hash(password, 10)
-      console.log(user_id, hashPassword)
       await models.userModels.updatePassword(user_id, hashPassword)
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -53,7 +60,7 @@ const createGroup = (user_id, group_name, stock_id_array) => {
       await models.userModels.insertGroup(insertValues)
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -74,7 +81,7 @@ const getGroup = (user_id) => {
 
       resolve(result)
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -85,7 +92,7 @@ const deleteGroup = (user_id, group_name) => {
       await models.userModels.deleteGroup(user_id, group_name)
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -100,7 +107,7 @@ const updateGroup = (user_id, old_group_name, new_group_name, stock_id_array) =>
       await models.userModels.insertGroup(insertValues)
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -120,7 +127,7 @@ const getAllIndustryStock = () => {
       }
       resolve(result)
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -132,7 +139,7 @@ const setDefaultCombo = (user_id, group_name) => {
       await models.userModels.setDefault(user_id, group_name)
       resolve()
     } catch (error) {
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }

@@ -2,7 +2,7 @@ const router = require('express').Router()
 const cotroll = require('../controllers')
 
 const usermiddleware = (req, res, next) => {
-  req.user_id = 2
+  req.user_id = 3
   next()
 }
 
@@ -16,17 +16,17 @@ const usermiddleware = (req, res, next) => {
  *  password: string
  * }
  */
-router.post('/register', async (req, res) => {
+router.post('/register', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let insertValues = req.body
     await cotroll.userControll.createUser(insertValues)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    console.log(error.message)
-    response_data.errorMessage = 'CreateUser function have some error'
+    error.response_data = response_data
+    next(error)
   }
-  res.status(200).send(response_data)
 })
 
 /**
@@ -43,18 +43,18 @@ router.post('/register', async (req, res) => {
  *  token: string
  * }
  */
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let insertValues = req.body
     let result = await cotroll.userControll.loginUser(insertValues)
     response_data.success = true
     response_data.data = result
+    return res.status(200).send(response_data)
   } catch (error) {
-    console.log(error.message)
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  res.status(200).send(response_data)
 })
 
 /**
@@ -65,18 +65,18 @@ router.post('/login', async (req, res) => {
  *  password: string
  * }
  */
-router.patch('/update/password', async (req, res) => {
+router.patch('/update/password', usermiddleware, async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let insertValues = req.body
-    let user_id = 2
+    let user_id = req.user_id
     await cotroll.userControll.updatePassword(user_id, insertValues)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    console.log(error.message)
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  res.status(200).send(response_data)
 })
 
 /**
@@ -90,7 +90,7 @@ router.patch('/update/password', async (req, res) => {
  *  }[]
  * }[]
  */
-router.get('/lightup/history', (req, res) => {})
+router.get('/lightup/history', (req, res,next) => {})
 
 /**
  * 獲取目前用戶的投資組合
@@ -111,17 +111,19 @@ router.get('/lightup/history', (req, res) => {})
  *  }[]
  * }[]
  */
-router.get('/getGroup', usermiddleware, async (req, res) => {
+router.get('/getGroup', usermiddleware, async (req, res,next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let user_id = req.user_id
     let result = await cotroll.userControll.getGroup(user_id)
     response_data.success = true
     response_data.data = result
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
+  
 })
 
 // 晚點補一個將已有的預設投資組合作設置與刪除
@@ -134,17 +136,19 @@ router.get('/getGroup', usermiddleware, async (req, res) => {
  *  team_name: string
  * }
  */
-router.post('/createGroup', usermiddleware, async (req, res) => {
+router.post('/createGroup', usermiddleware, async (req, res,next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let user_id = req.user_id
     let { group_name, stock_id_array } = req.body
     await cotroll.userControll.createGroup(user_id, group_name, stock_id_array)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
+  
 })
 
 /**
@@ -153,17 +157,19 @@ router.post('/createGroup', usermiddleware, async (req, res) => {
  * @route DELETE /api/user/deleteGroup
  * @param {string} - group_name
  */
-router.delete('/deleteGroup', usermiddleware, async (req, res) => {
+router.delete('/deleteGroup', usermiddleware, async (req, res,next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let group_name = req.body.group_name
     let user_id = req.user_id
     await cotroll.userControll.deleteGroup(user_id, group_name)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
+  
 })
 
 /**
@@ -176,7 +182,7 @@ router.delete('/deleteGroup', usermiddleware, async (req, res) => {
  *  stock_id_array: array
  * }
  */
-router.patch('/updateGroup', usermiddleware, async (req, res) => {
+router.patch('/updateGroup', usermiddleware, async (req, res,next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let user_id = req.user_id
@@ -185,10 +191,12 @@ router.patch('/updateGroup', usermiddleware, async (req, res) => {
     let stock_id_array = req.body.stock_id_array
     await cotroll.userControll.updateGroup(user_id, old_group_name, new_group_name, stock_id_array)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
+  
 })
 
 /**
@@ -204,16 +212,17 @@ router.patch('/updateGroup', usermiddleware, async (req, res) => {
  *  }[]
  * }[]
  */
-router.get('/all/industry/stock', usermiddleware, async (req, res) => {
+router.get('/all/industry/stock', usermiddleware, async (req, res,next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let result = await cotroll.userControll.getAllIndustryStock()
     response_data.data = result
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
 })
 
 /**
@@ -224,17 +233,18 @@ router.get('/all/industry/stock', usermiddleware, async (req, res) => {
  *  group_name: string
  * }
  */
-router.patch('/set/default/combo', usermiddleware, async (req, res) => {
+router.patch('/set/default/combo', usermiddleware, async (req, res,next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let user_id = req.user_id
     let group_name = req.body.group_name
     await cotroll.userControll.setDefaultCombo(user_id, group_name)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
 })
 
 module.exports = router

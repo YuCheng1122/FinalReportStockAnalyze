@@ -1,5 +1,6 @@
 const { weatherAnaly } = require('../analysis/index')
 const { weatherModels } = require('../models/index2')
+const {ControllerError} = require('../../error_classes')
 
 const predictFmtqik = (type, timestamp) => {
   return new Promise(async (resolve, reject) => {
@@ -12,7 +13,7 @@ const predictFmtqik = (type, timestamp) => {
       resolve({ predict_rate: result })
     } catch (error) {
       console.log(error.message)
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -27,7 +28,7 @@ const weahterRegression = (independent, dependent) => {
       resolve(result)
     } catch (error) {
       console.log(error.message)
-      reject({ message: `Error: ${error.message}` })
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -35,10 +36,10 @@ const weahterRegression = (independent, dependent) => {
 const weatherAutomicRegression = (independent, dependent) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await weatherAnaly.atomicRegression(independent, dependent)
-      resolve()
+      let result = await weatherAnaly.atomicRegression(independent, dependent)
+      resolve(result)
     } catch (error) {
-      reject(error)
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }
@@ -49,7 +50,7 @@ const weatherCC = (independent, dependent) => {
       let result = await weatherAnaly.correlationCoefficient(independent, dependent)
       resolve(result)
     } catch (error) {
-      reject(error)
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }
   })
 }

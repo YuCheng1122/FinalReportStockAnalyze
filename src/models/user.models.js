@@ -1,4 +1,5 @@
 const mysql = require('mysql2')
+const { SqlError } = require('../../error_classes')
 
 const db = mysql.createPool({
   host: process.env.DB_HOST,
@@ -19,27 +20,23 @@ const insertUser = async (insertValues) => {
     let sql = 'INSERT INTO user SET ?'
     db.query(sql, insertValues, (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/user.models.js insertUser have some error, ${error.message}` })
-        return
+        reject(new SqlError(error, 4))
+      } else {
+        resolve()
       }
-      resolve()
     })
   })
 }
 
 const selectUser = async (email) => {
   return new Promise((resolve, reject) => {
-    let sql = 'SELECT user_id, password FROM user WHERE email = ?'
+    let sql = 'SELECT user_id, password, email FROM user WHERE email = ?'
     db.query(sql, email, (error, result) => {
       if (error) {
-        reject({ message: `/src/user.models.js selectUser have some error, ${error.message}` })
-        return
-      } else if (result.length === 0) {
-        reject({ message: 'No search user email' })
-        return
+        reject(new SqlError(error, 4))
+      } else {
+        resolve(result)
       }
-      resolve(result[0])
     })
   })
 }
@@ -49,13 +46,12 @@ const updatePassword = async (user_id, hashPassword) => {
     let sql = 'UPDATE user SET PASSWORD = ? WHERE user_id = ?'
     db.query(sql, [hashPassword, user_id], (error, result) => {
       if (error) {
-        reject({ message: `/src/user.models.js updatePassword have some error, ${error.message}` })
-        return
-      } else if (result.length === 0) {
-        reject({ message: 'No search user email' })
-        return
+        reject(new SqlError(error))
+      } else if (result.affectedRows === 0) {
+        reject(new SqlError(new Error('No search user email'), 3))
+      } else {
+        resolve(result[0])
       }
-      resolve(result[0])
     })
   })
 }
@@ -65,8 +61,7 @@ const insertGroup = (insertValues) => {
     let sql = 'INSERT INTO preferStock(user_id,group_name,stock_id) VALUES ?'
     db.query(sql, [insertValues], (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/user.models.js insertGroup have some error, ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve()
       }
@@ -79,8 +74,7 @@ const getGroup = (user_id) => {
     let sql = 'WITH RankedStockData AS (SELECT sda.stock_id,sda.change,sda.opening_price,sda.closing_price,sda.highest_price,sda.lowest_price,ROW_NUMBER() OVER (PARTITION BY sda.stock_id ORDER BY sda.create_date DESC) AS RowNum FROM stock_day_all sda) SELECT s.stock_id,s.name,pf.group_name,rsd.change,rsd.opening_price,rsd.closing_price,rsd.highest_price,rsd.lowest_price FROM preferStock pf LEFT JOIN stock s ON pf.stock_id = s.stock_id LEFT JOIN RankedStockData rsd ON s.stock_id = rsd.stock_id AND rsd.RowNum = 1 WHERE pf.user_id = ? ORDER BY pf.group_name;'
     db.query(sql, [user_id], (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/models/user.models.js getGroup have some error , ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve(result)
       }
@@ -94,8 +88,7 @@ const deleteGroup = (user_id, group_name) => {
     let sql = 'DELETE FROM preferStock WHERE user_id = ? AND group_name = ?'
     db.query(sql, [user_id, group_name], (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/models/user.models.js deleteGroup have some error , ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve()
       }
@@ -108,8 +101,7 @@ const getAllIndustryStock = () => {
     let sql = 'SELECT * FROM stock ORDER BY industry'
     db.query(sql, (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/models/user.models getAllIndustryStock have some error , ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve(result)
       }
@@ -122,8 +114,7 @@ const setDefault = (user_id, group_name) => {
     let sql = 'UPDATE preferstock SET is_default = TRUE WHERE user_id = ? AND group_name = ?'
     db.query(sql, [user_id, group_name], (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/models/user.models.js setDefault have some error , ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve()
       }
@@ -136,8 +127,7 @@ const cleanDefault = (user_id) => {
     let sql = 'UPDATE preferstock SET is_default = false WHERE user_id = ?'
     db.query(sql, [user_id], (error, result) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/models/user.models.js cleanDefault have some error , ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve()
       }

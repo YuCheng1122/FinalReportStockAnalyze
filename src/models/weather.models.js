@@ -1,4 +1,5 @@
 const mysql = require('mysql2')
+const { SqlError } = require('../../error_classes')
 
 const db = mysql.createPool({
   host: process.env.DB_HOST,
@@ -19,8 +20,7 @@ const selectTemper = () => {
     let sql = 'SELECT temperature, date FROM weather'
     db.query(sql, (error, results) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/weather.models.js selectTemper have some error, ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve(results)
       }
@@ -33,8 +33,7 @@ const selectWeatherWithFmtqik = () => {
     let sql = 'SELECT w.STATUS, w.temperature,w.humidity,w.precipitation,f.price,f.date FROM weather w JOIN fmtqik f ON w.date=f.date'
     db.query(sql, (error, results) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/weather.models.js selectWeatherWithFmtqik have some error, ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve(results)
       }
@@ -47,8 +46,7 @@ const selectWeatherWithType = (condition, time) => {
     let sql = `SELECT COUNT(*) AS count FROM fmtqik AS a JOIN fmtqik AS b ON a.f_m_id = b.f_m_id + ${time} JOIN weather AS w ON a.date = w.date WHERE a.price > b.price AND ${condition}`
     db.query(sql, (error, results) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/weather.models.js selectWeatherWithType have some error, ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve(results)
       }
@@ -61,8 +59,7 @@ const selectWeatherCount = (condition) => {
     let sql = `SELECT COUNT(*) as count FROM weather w JOIN fmtqik f ON w.date = f.date WHERE ${condition}`
     db.query(sql, (error, results) => {
       if (error) {
-        console.log(error)
-        reject({ message: `/src/weather.models.js selectWeatherCount have some error, ${error.message}` })
+        reject(new SqlError(error, 4))
       } else {
         resolve(results)
       }

@@ -9,7 +9,7 @@ const { weatherController } = require('../controllers/index')
  *  predict_rate: number
  * }
  */
-router.get('/predict/fmtqik/:type/:timestamp', async (req, res) => {
+router.get('/predict/fmtqik/:type/:timestamp', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let type = req.params.type
@@ -17,11 +17,11 @@ router.get('/predict/fmtqik/:type/:timestamp', async (req, res) => {
     let results = await weatherController.predictFmtqik(type, timestamp)
     response_data.success = true
     response_data.data = results
+    return res.status(200).send(response_data)
   } catch (error) {
-    console.log(error)
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
 })
 
 /**
@@ -33,7 +33,7 @@ router.get('/predict/fmtqik/:type/:timestamp', async (req, res) => {
  *  'intercept': number
  * }
  */
-router.get('/linear/regression/:independent/:dependent', async (req, res) => {
+router.get('/linear/regression/:independent/:dependent', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let independent = req.params.independent
@@ -42,11 +42,11 @@ router.get('/linear/regression/:independent/:dependent', async (req, res) => {
     let result = await weatherController.weahterRegression(independent, dependent)
     response_data.data = result
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    console.log(error)
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
 })
 
 /**
@@ -57,17 +57,18 @@ router.get('/linear/regression/:independent/:dependent', async (req, res) => {
  *  predicted_number: number
  * }
  */
-router.get('/automic/regression/:independent/:dependent', async (req, res) => {
+router.get('/automic/regression/:independent/:dependent', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let independent = req.params.independent
     let dependent = req.params.dependent
-    await weatherController.weatherAutomicRegression(independent, dependent)
+    response_data.data = await weatherController.weatherAutomicRegression(independent, dependent)
     response_data.success = true
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
 })
 
 /**
@@ -78,7 +79,7 @@ router.get('/automic/regression/:independent/:dependent', async (req, res) => {
  *  cc: number
  * }
  */
-router.get('/correlation/coefficient/:independent/:dependent', async (req, res) => {
+router.get('/correlation/coefficient/:independent/:dependent', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let independent = req.params.independent
@@ -86,10 +87,11 @@ router.get('/correlation/coefficient/:independent/:dependent', async (req, res) 
     let result = await weatherController.weatherCC(independent, dependent)
     response_data.success = true
     response_data.data = result
+    return res.status(200).send(response_data)
   } catch (error) {
-    response_data.errorMessage = error.message
+    error.response_data = response_data
+    next(error)
   }
-  return res.status(200).send(response_data)
 })
 
 module.exports = router
