@@ -1,10 +1,10 @@
 const router = require('express').Router()
 const cotroll = require('../controllers')
-
-const usermiddleware = (req, res, next) => {
-  req.user_id = 3
-  next()
-}
+const jwt = require('jsonwebtoken')
+const passport = require('passport')
+require('./src/config/passport')(passport)
+const userValidation = require('../validations/user.validation')
+const { RouteError } = require('../../error_classes')
 
 /**
  * 註冊會員
@@ -19,8 +19,11 @@ const usermiddleware = (req, res, next) => {
 router.post('/register', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let insertValues = req.body
-    await cotroll.userControll.createUser(insertValues)
+    const valid = userValidation.registerVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+    await cotroll.userControll.createUser(req.body)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -46,10 +49,15 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let insertValues = req.body
-    let result = await cotroll.userControll.loginUser(insertValues)
+    const valid = userValidation.loginVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+    let result = await cotroll.userControll.loginUser(req.body)
     response_data.success = true
+    let token = jwt.sign({ user_id: result.user_id, email: result.email }, process.env.JWT_SECRET_KEY)
     response_data.data = result
+    response_data.data.token = 'JWT ' + token
     return res.status(200).send(response_data)
   } catch (error) {
     error.response_data = response_data
@@ -65,12 +73,15 @@ router.post('/login', async (req, res, next) => {
  *  password: string
  * }
  */
-router.patch('/update/password', usermiddleware, async (req, res, next) => {
+router.patch('/update/password', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let insertValues = req.body
-    let user_id = req.user_id
-    await cotroll.userControll.updatePassword(user_id, insertValues)
+    const valid = userValidation.updatePasswordVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+
+    await cotroll.userControll.updatePassword(req.user.user_id, req.body)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -90,7 +101,7 @@ router.patch('/update/password', usermiddleware, async (req, res, next) => {
  *  }[]
  * }[]
  */
-router.get('/lightup/history', (req, res,next) => {})
+router.get('/lightup/history', passport.authenticate('jwt', { session: false }), (req, res, next) => {})
 
 /**
  * 獲取目前用戶的投資組合
@@ -111,11 +122,10 @@ router.get('/lightup/history', (req, res,next) => {})
  *  }[]
  * }[]
  */
-router.get('/getGroup', usermiddleware, async (req, res,next) => {
+router.get('/getGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let user_id = req.user_id
-    let result = await cotroll.userControll.getGroup(user_id)
+    let result = await cotroll.userControll.getGroup(req.user.user_id)
     response_data.success = true
     response_data.data = result
     return res.status(200).send(response_data)
@@ -123,32 +133,33 @@ router.get('/getGroup', usermiddleware, async (req, res,next) => {
     error.response_data = response_data
     next(error)
   }
-  
 })
 
-// 晚點補一個將已有的預設投資組合作設置與刪除
 /**
  * 新增投資組合
  *
  * @route POST /api/user/createGroup
  * @param {object} - {
  *  stock_id_array: array
- *  team_name: string
+ *  group_name: string
  * }
  */
-router.post('/createGroup', usermiddleware, async (req, res,next) => {
+router.post('/createGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let user_id = req.user_id
+    const valid = userValidation.createGroupVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+
     let { group_name, stock_id_array } = req.body
-    await cotroll.userControll.createGroup(user_id, group_name, stock_id_array)
+    await cotroll.userControll.createGroup(req.user.user_id, group_name, stock_id_array)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
     error.response_data = response_data
     next(error)
   }
-  
 })
 
 /**
@@ -157,19 +168,21 @@ router.post('/createGroup', usermiddleware, async (req, res,next) => {
  * @route DELETE /api/user/deleteGroup
  * @param {string} - group_name
  */
-router.delete('/deleteGroup', usermiddleware, async (req, res,next) => {
+router.delete('/deleteGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let group_name = req.body.group_name
-    let user_id = req.user_id
-    await cotroll.userControll.deleteGroup(user_id, group_name)
+    const valid = userValidation.deleteGroupVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+
+    await cotroll.userControll.deleteGroup(req.user.user_id, req.body.group_name)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
     error.response_data = response_data
     next(error)
   }
-  
 })
 
 /**
@@ -182,21 +195,24 @@ router.delete('/deleteGroup', usermiddleware, async (req, res,next) => {
  *  stock_id_array: array
  * }
  */
-router.patch('/updateGroup', usermiddleware, async (req, res,next) => {
+router.patch('/updateGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let user_id = req.user_id
+    const valid = userValidation.updateGroupVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+
     let old_group_name = req.body.old_group_name
     let new_group_name = req.body.new_group_name
     let stock_id_array = req.body.stock_id_array
-    await cotroll.userControll.updateGroup(user_id, old_group_name, new_group_name, stock_id_array)
+    await cotroll.userControll.updateGroup(req.user.user_id, old_group_name, new_group_name, stock_id_array)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
     error.response_data = response_data
     next(error)
   }
-  
 })
 
 /**
@@ -212,7 +228,7 @@ router.patch('/updateGroup', usermiddleware, async (req, res,next) => {
  *  }[]
  * }[]
  */
-router.get('/all/industry/stock', usermiddleware, async (req, res,next) => {
+router.get('/all/industry/stock', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let result = await cotroll.userControll.getAllIndustryStock()
@@ -233,12 +249,15 @@ router.get('/all/industry/stock', usermiddleware, async (req, res,next) => {
  *  group_name: string
  * }
  */
-router.patch('/set/default/combo', usermiddleware, async (req, res,next) => {
+router.patch('/set/default/combo', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let user_id = req.user_id
-    let group_name = req.body.group_name
-    await cotroll.userControll.setDefaultCombo(user_id, group_name)
+    const valid = userValidation.setDefaultComboVali(req.body)
+    if (valid.error) {
+      throw new RouteError(new Error(valid.error.details[0].message), 1)
+    }
+
+    await cotroll.userControll.setDefaultCombo(req.user.user_id, req.body.group_name)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {

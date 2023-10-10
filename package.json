@@ -18,6 +18,8 @@
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
     "ml-matrix": "^6.10.4",
     "mysql": "^2.18.1",
     "mysql2": "^3.6.0",

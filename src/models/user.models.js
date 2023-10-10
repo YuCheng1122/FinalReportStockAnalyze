@@ -15,7 +15,7 @@ const db = mysql.createPool({
   keepAliveInitialDelay: 0,
 })
 
-const insertUser = async (insertValues) => {
+const insertUser = (insertValues) => {
   return new Promise((resolve, reject) => {
     let sql = 'INSERT INTO user SET ?'
     db.query(sql, insertValues, (error, result) => {
@@ -28,7 +28,7 @@ const insertUser = async (insertValues) => {
   })
 }
 
-const selectUser = async (email) => {
+const selectUser = (email) => {
   return new Promise((resolve, reject) => {
     let sql = 'SELECT user_id, password, email FROM user WHERE email = ?'
     db.query(sql, email, (error, result) => {
@@ -41,7 +41,22 @@ const selectUser = async (email) => {
   })
 }
 
-const updatePassword = async (user_id, hashPassword) => {
+const selectUserwithJWT = (user_id, email) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'SELECT * FROM user WHERE user_id = ? AND email = ?'
+    db.query(sql, [user_id, email], (error, result) => {
+      if (error) {
+        reject(new SqlError(error, 4))
+      } else if (result.length === 0) {
+        reject(new SqlError(new Error('Not correct jwt'), 4))
+      } else {
+        resolve(true)
+      }
+    })
+  })
+}
+
+const updatePassword = (user_id, hashPassword) => {
   return new Promise((resolve, reject) => {
     let sql = 'UPDATE user SET PASSWORD = ? WHERE user_id = ?'
     db.query(sql, [hashPassword, user_id], (error, result) => {
@@ -135,4 +150,4 @@ const cleanDefault = (user_id) => {
   })
 }
 
-module.exports = { insertUser, selectUser, updatePassword, insertGroup, getGroup, deleteGroup, getAllIndustryStock, setDefault, cleanDefault }
+module.exports = { insertUser, selectUser, updatePassword, insertGroup, getGroup, deleteGroup, getAllIndustryStock, setDefault, cleanDefault, selectUserwithJWT }

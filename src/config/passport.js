@@ -1,6 +1,7 @@
-let adminModule = require('../modules/index').adminModule
+require('dotenv').config()
 let JwtStrategy = require('passport-jwt').Strategy
 let ExtractJwt = require('passport-jwt').ExtractJwt
+const { userModels } = require('../models/index2')
 
 module.exports = (passport) => {
   let opts = {}
@@ -9,7 +10,7 @@ module.exports = (passport) => {
   passport.use(
     new JwtStrategy(opts, async (jwt_payload, done) => {
       try {
-        //await adminModule.selectEmail(jwt_payload.admin_id, jwt_payload.email, jwt_payload.platform_id)
+        await userModels.selectUserwithJWT(jwt_payload.user_id, jwt_payload.email)
         done(null, jwt_payload)
       } catch (error) {
         done(error, false)
