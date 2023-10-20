@@ -144,4 +144,15 @@ const setDefaultCombo = (user_id, group_name) => {
   })
 }
 
-module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo }
+const getHistory = (user_id) => {
+  return new Promise(async(resolve,reject) => {
+    try{
+      const results = await models.userModels.getUserHistory(user_id)
+      resolve(results)
+    }catch(error){
+      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
+    }
+  })
+}
+
+module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory }

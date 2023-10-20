@@ -55,4 +55,11 @@ const setDefaultComboVali = (insertValues) => {
   return schema.validate(insertValues)
 }
 
-module.exports = { registerVali, loginVali, updatePasswordVali, createGroupVali, deleteGroupVali, updateGroupVali, setDefaultComboVali }
+const getHistoryVali = (insertValues) => {
+  const schema = joi.object({
+    user_id: joi.number().required(),
+  })
+  return schema.validate(insertValues)
+}
+
+module.exports = { registerVali, loginVali, updatePasswordVali, createGroupVali, deleteGroupVali, updateGroupVali, setDefaultComboVali, getHistoryVali }

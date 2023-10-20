@@ -50,6 +50,7 @@ const errorlogMiddleware = (error, req, res, next) => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/user', prelogMiddleware, routes.userRoutes, errorlogMiddleware)
+app.use('/api/user/response', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.userResponseRoutes, errorlogMiddleware)
 app.use('/api/weather', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.weatherRedictRoutes, errorlogMiddleware)
 
 app.listen(process.env.PORT, () => {

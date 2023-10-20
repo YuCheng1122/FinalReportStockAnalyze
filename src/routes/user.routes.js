@@ -101,7 +101,22 @@ router.patch('/update/password', passport.authenticate('jwt', { session: false }
  *  }[]
  * }[]
  */
-router.get('/lightup/history', passport.authenticate('jwt', { session: false }), (req, res, next) => {})
+router.get('/lightup/history/:user_id', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  let response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const valid = userValidation.getHistoryVali(req.params)
+    if(valid.error){
+      throw new RouteError(new Error(valid.error.details[0].message),1)
+    }
+    const results = await cotroll.userControll.getHistory(req.params.user_id)
+    response_data.success = true
+    response_data.data = results
+    return res.status(200).send(response_data)
+  }catch(error){
+    error.response_data = response_data
+    next(error)
+  }
+})
 
 /**
  * 獲取目前用戶的投資組合
