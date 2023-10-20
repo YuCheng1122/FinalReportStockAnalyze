@@ -1,6 +1,6 @@
 const models = require('../models/index2')
 const bcrypt = require('bcrypt')
-const { ControllerError, SqlError } = require('../../error_classes')
+const { ControllerError, SqlError } = require('../config/error_classes')
 
 const createUser = (insertValues) => {
   return new Promise(async (resolve, reject) => {

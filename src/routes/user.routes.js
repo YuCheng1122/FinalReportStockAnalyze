@@ -2,9 +2,9 @@ const router = require('express').Router()
 const cotroll = require('../controllers')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
-require('./src/config/passport')(passport)
+require('../config/passport')(passport)
 const userValidation = require('../validations/user.validation')
-const { RouteError } = require('../../error_classes')
+const { RouteError } = require('../config/error_classes')
 
 /**
  * 註冊會員
@@ -122,7 +122,7 @@ router.get('/lightup/history', passport.authenticate('jwt', { session: false }),
  *  }[]
  * }[]
  */
-router.get('/getGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.get('/getGroup', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let result = await cotroll.userControll.getGroup(req.user.user_id)
@@ -144,7 +144,7 @@ router.get('/getGroup', usermiddleware, passport.authenticate('jwt', { session: 
  *  group_name: string
  * }
  */
-router.post('/createGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.post('/createGroup', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     const valid = userValidation.createGroupVali(req.body)
@@ -168,7 +168,7 @@ router.post('/createGroup', usermiddleware, passport.authenticate('jwt', { sessi
  * @route DELETE /api/user/deleteGroup
  * @param {string} - group_name
  */
-router.delete('/deleteGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.delete('/deleteGroup', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     const valid = userValidation.deleteGroupVali(req.body)
@@ -195,7 +195,7 @@ router.delete('/deleteGroup', usermiddleware, passport.authenticate('jwt', { ses
  *  stock_id_array: array
  * }
  */
-router.patch('/updateGroup', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.patch('/updateGroup', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     const valid = userValidation.updateGroupVali(req.body)
@@ -228,7 +228,7 @@ router.patch('/updateGroup', usermiddleware, passport.authenticate('jwt', { sess
  *  }[]
  * }[]
  */
-router.get('/all/industry/stock', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.get('/all/industry/stock', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     let result = await cotroll.userControll.getAllIndustryStock()
@@ -249,7 +249,7 @@ router.get('/all/industry/stock', usermiddleware, passport.authenticate('jwt', {
  *  group_name: string
  * }
  */
-router.patch('/set/default/combo', usermiddleware, passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.patch('/set/default/combo', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     const valid = userValidation.setDefaultComboVali(req.body)

@@ -1,6 +1,6 @@
 const { weatherAnaly } = require('../analysis/index')
 const { weatherModels } = require('../models/index2')
-const {ControllerError} = require('../../error_classes')
+const { ControllerError } = require('../config/error_classes')
 
 const predictFmtqik = (type, timestamp) => {
   return new Promise(async (resolve, reject) => {

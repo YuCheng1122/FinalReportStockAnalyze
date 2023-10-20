@@ -1,5 +1,5 @@
 const mysql = require('mysql2')
-const { SqlError } = require('../../error_classes')
+const { SqlError } = require('../config/error_classes')
 
 const db = mysql.createPool({
   host: process.env.DB_HOST,

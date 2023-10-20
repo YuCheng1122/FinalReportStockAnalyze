@@ -1,6 +1,6 @@
 const { Matrix, solve } = require('ml-matrix')
 const { weatherModels, fmtqikModels } = require('../models/index2')
-const { ControllerError } = require('../../error_classes')
+const { ControllerError } = require('../config/error_classes')
 
 // 相關係數
 const correlationCoefficient = (independent, dependent) => {
