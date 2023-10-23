@@ -2,7 +2,7 @@ const router = require('express').Router()
 const cotroll = require('../controllers')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
-require('./src/config/passport')(passport)
+require('../config/passport')(passport)
 const userValidation = require('../validations/user.validation')
 const { RouteError } = require('../../error_classes')
 
