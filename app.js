@@ -2,7 +2,7 @@ const express = require('express')
 const passport = require('passport')
 require('./src/config/passport')(passport)
 const routes = require('./src/routes')
-const { ControllerError, SqlError } = require('./src/config/error_classes')
+const { AppError } = require('./src/config/error_classes')
 const { handleError, handleInfo } = require('./src/config/log_creator')
 require('dotenv').config()
 
@@ -17,7 +17,7 @@ const prelogMiddleware = (req, res, next) => {
     })
     next()
   } catch (error) {
-    handleError(error, 'preMiddleware')
+    handleError(new AppError(error, 'Middleware', 'prelogMiddleware', 4))
   }
 }
 
@@ -31,18 +31,17 @@ const prelogMiddleware = (req, res, next) => {
  *
  */
 const errorlogMiddleware = (error, req, res, next) => {
-  let response_data = error.response_data
+  let response_data = { success: false, data: null, errorMessage: null }
   try {
-    if (error instanceof SqlError) {
+    if (error.errorLevel === 3 || error.errorLevel === 4) {
       response_data.errorMessage = 'An error occured, Please contact relevant technoligists for assistance.'
-    } else if (error instanceof ControllerError) {
-      response_data.errorMessage = error.status === 3 ? 'An error occured, Please contact relevant technoligists for assistance.' : error.message
     } else {
       response_data.errorMessage = error.message
     }
-    handleError(error, req.client.parser.incoming.baseUrl.split('/')[2])
+    console.log(error)
+    handleError(error)
   } catch (error) {
-    handleError(error, 'errorMiddleware')
+    handleError(new AppError(error, 'Middleware', 'errorlogMiddleware', 4))
   }
   return res.status(200).send(response_data)
 }

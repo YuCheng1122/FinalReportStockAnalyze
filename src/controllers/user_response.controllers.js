@@ -1,15 +1,16 @@
 const models = require('../models/index2')
-const { ControllerError } = require('../config/error_classes')
+const { AppError } = require('../config/error_classes')
 
-const createComment = (insertValues) => {
-  return new Promise(async(resolve,reject) => {
-    try{
-      await models.userResponseModels(insertValues)
-      resolve()
-    }catch(error){
-      error.name === 'SqlError' ? reject(error) : reject(new ControllerError(error,3))
+const createComment = async (insertValues) => {
+  try {
+    await models.userResposeModels(insertValues)
+  } catch (error) {
+    if (error.source === 'SqlError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'createComment', 3)
     }
-  })
+  }
 }
 
 module.exports = createComment

@@ -10,9 +10,9 @@ const logPrintf = printf((Info) => {
   let information
   if (Info.level === 'error') {
     if (Info.stack) {
-      information = `[${Info.level}] [TimeStamp: ${Info.timestamp}] [ErrorName: ${Info.name}] [TAG: ${Info.tag}] [Message: ${Info.message}]\n${Info.stack}\n\n`
+      information = `[${Info.level}] [TimeStamp: ${Info.timestamp}] [ErrorSource: ${Info.source}] [errorLocation: ${Info.errorLocation}] [Message: ${Info.message}]\n${Info.stack}\n\n`
     } else {
-      information = `[${Info.level}] [TimeStamp: ${Info.timestamp}] [ErrorName: ${Info.name}] [TAG: ${Info.tag}] [Message: ${Info.message}]`
+      information = `[${Info.level}] [TimeStamp: ${Info.timestamp}] [ErrorSource: ${Info.source}] [errorLocation: ${Info.errorLocation}] [Message: ${Info.message}]`
     }
   } else {
     let body = Info.body ? JSON.stringify(Info.body) : {}
@@ -21,24 +21,25 @@ const logPrintf = printf((Info) => {
   return information
 })
 
+// if (process.env.NODE_ENV !== 'production') {
+//   logger.add(new winston.transports.Console({
+//     format: winston.format.simple(),
+//   }));
+// }
+
 const combinedLogger = winston.createLogger({
   level: 'info',
-  transports: [
-    new transports.File({filename:'./files/logs/combine.log',level:'info', format: combine(timestamp(), logPrintf)}), 
-    new transports.Console({ format: combine(colorize({ all: true }), timestamp(), consoleFormatter) })
-  ],
+  transports: [new transports.File({ filename: './files/logs/combine.log', level: 'info', format: combine(timestamp(), logPrintf) }), new transports.Console({ format: combine(colorize({ all: true }), timestamp(), consoleFormatter) })],
 })
 
 const errorLogger = winston.createLogger({
   level: 'error',
-  transports: [
-    new transports.File({filename: './files/logs/error.log', level: 'error', format: combine(timestamp(), logPrintf)}),
-  ],
+  transports: [new transports.File({ filename: './files/logs/error.log', level: 'error', format: combine(timestamp(), logPrintf) })],
 })
 
-handleError = (err, tag) => {
-  combinedLogger.error({ message: err.message, name: err.name, tag })
-  errorLogger.error({message: err.message, name: tag, stack: err.stack})
+handleError = (err) => {
+  combinedLogger.error({ message: err.message, source: err.source, errorLocation: err.errorLocation })
+  errorLogger.error({ message: err.message, source: err.source, errorLocation: err.errorLocation, stack: err.stack })
 }
 
 handleInfo = (info) => {

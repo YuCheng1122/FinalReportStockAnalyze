@@ -1,22 +1,10 @@
-class SqlError extends Error {
-  constructor(originError, status) {
-    super(originError.message)
-    ;(this.name = 'SqlError'), (this.stack = originError.stack), (this.status = status)
+class AppError extends Error {
+  constructor(originError, source, errorLocation, errorLevel) {
+    super(originError, source, errorLocation, errorLevel)
+    this.source = source
+    this.errorLocation = errorLocation
+    this.errorLevel = errorLevel
   }
 }
 
-class ControllerError extends Error {
-  constructor(originError, status) {
-    super(originError.message)
-    ;(this.name = 'ControllerError'), (this.stack = originError.stack), (this.status = status)
-  }
-}
-
-class RouteError extends Error {
-  constructor(originError, status) {
-    super(originError.message)
-    ;(this.name = 'RouteError'), (this.stack = originError.stack), (this.status = status)
-  }
-}
-
-module.exports = { RouteError, ControllerError, SqlError }
+module.exports = { AppError }
