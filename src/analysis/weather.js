@@ -1,17 +1,15 @@
 const { Matrix, solve } = require('ml-matrix')
 const { weatherModels, fmtqikModels } = require('../models/index2')
-const { ControllerError } = require('../../error_classes')
+const { ControllerError } = require('../config/error_classes')
 
 // 相關係數
-const correlationCoefficient = (independent, dependent) => {
-  return new Promise(async (resolve, reject) => {
+const correlationCoefficient = async (type, stock_id) => {
     try {
-      const mapping = {
-        fmtqik: weatherModels.selectWeatherWithFmtqik,
-      }
-      let datas = await mapping[dependent]()
-      let a = datas.map((item) => Number(item[independent]))
+      const datas = await weatherModels.selectWeatherWithStock(type, stock_id)
+      // let datas = await weatherModels.selectWeatherWithFmtqik(type)
+      let a = datas.map((item) => Number(item[type]))
       let b = datas.map((item) => Number(item.price))
+      console.log(a, b)
 
       const minlength = Math.min(a.length, b.length)
       let aa = a.reduce((acc, val) => acc + val) / minlength
@@ -26,47 +24,55 @@ const correlationCoefficient = (independent, dependent) => {
       cov.toFixed(4)
       let result = cov / (Math.sqrt(vara) * Math.sqrt(varb))
       result = result.toFixed(4)
-      resolve({ cc: result })
+      return { a, 'stock_price': b}
+      
     } catch (error) {
-      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
+      if (error.name === 'SqlError') {
+        throw error
+      } else {
+        throw new ControllerError(error, 3)
+      }
     }
-  })
+  
 }
 
 // 回歸分析
-const simpleLinearRegression = (independent, dependent) => {
+const simpleLinearRegression = (type, stock_id) => {
   return new Promise(async (resolve, reject) => {
     try {
       // 根據參數決定撈取什麼資料
-      const mapping = {
-        fmtqik: weatherModels.selectWeatherWithFmtqik,
-      }
 
-      const weather_fmtqik_data = await mapping[dependent]()
+      const weather_data = await weatherModels.selectWeatherWithStock(type, stock_id)
+      const status_type = ['sunny', 'cloudy', 'rainny']
+      if (status_type.includes(type)) type = 'status'
+
       const calculateAverage = (key1, key2) => {
         let sum = 0
         if (!key2) {
-          for (let item of weather_fmtqik_data) sum += parseFloat(item[key1])
+          for (let item of weather_data) sum += parseFloat(item[key1])
         } else if (typeof key2 === 'string') {
-          for (let item of weather_fmtqik_data) {
+          for (let item of weather_data) {
             sum += parseFloat(item[key1]) * parseFloat(item[key2])
           }
         } else {
-          for (let item of weather_fmtqik_data) {
+          for (let item of weather_data) {
             sum += Math.pow(parseFloat(item[key1]), 2)
           }
         }
-        return sum / weather_fmtqik_data.length
+        return sum / weather_data.length
       }
+      const average_x = calculateAverage(type)
+      const average_y = calculateAverage('price')
+      const average_xy = calculateAverage('price', type)
+      const average_x_square = calculateAverage(type, 2)
+      const m = (average_xy - average_x * average_y) / (average_x_square - Math.pow(average_x, 2))
+      const b = average_y - m * average_x
 
-      let average_x = calculateAverage(independent)
-      let average_y = calculateAverage('price')
-      let average_xy = calculateAverage('price', independent)
-      let average_x_square = calculateAverage(independent, 2)
-      console.log(average_x, average_y, average_xy, average_x_square)
-      let m = (average_xy - average_x * average_y) / (average_x_square - Math.pow(average_x, 2))
-      let b = average_y - m * average_x
-      resolve({ '截距:': b, '斜率: ': m })
+      const datas = weather_data.map((data) => {
+        return { x: data[type], y: data.price }
+      })
+
+      resolve({ 'intercept:': parseFloat(b.toFixed(4)), 'slope: ': parseFloat(m.toFixed(4)), datas })
     } catch (error) {
       reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
     }

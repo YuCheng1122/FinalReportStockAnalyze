@@ -1,107 +1,39 @@
 const router = require('express').Router()
 const { weatherController } = require('../controllers/index')
 const weatherVali = require('../validations/weatherPredict.validation')
+const { AppError } = require('../config/error_classes')
 
 /**
- * 預測大盤
+ * 天氣分析API
  *
- * @route GET api/weather/predict/fmtqik/:type (sunny,rainy,cloudy)/timestamp (one,three,week)
+ * @route GET api/weather/predict
+ * @param {number} stock_id
+ * @param {string} type {晴天、陰天、雨天、溫度、濕度、降雨量}
  * @return {object} - {
- *  predict_rate: number
+ *  stock_id: number,
+ *  stock_name: string,
+ *  stock_price: number,
+ *  change: number,
+ *  change_week: number,
+ *  trade_volume: number,
+ *  independent_datas: number[],
+ *  dependent_datas: number[]
  * }
  */
-router.get('/predict/fmtqik/:type/:timestamp', async (req, res, next) => {
+router.get('/predict/:type/:stock_id', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    const valid = weatherController.predictFmtqik(req.params)
+    const valid = weatherVali.predictVali(req.params)
     if (valid.error) {
-      throw new RouteError(new Error(valid.error.details[0].message), 1)
+      throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/predice/:type/:stock_id',2)
     }
 
-    let results = await weatherController.predictFmtqik(req.params.type, req.params.timestamp)
-    response_data.success = true
-    response_data.data = results
-    return res.status(200).send(response_data)
-  } catch (error) {
-    error.response_data = response_data
-    next(error)
-  }
-})
-
-/**
- * 回歸分析
- *
- * @route GET api/weather/linear/regression/:independent/:dependent
- * @return {object} - {
- *  'slope': number,
- *  'intercept': number
- * }
- */
-router.get('/linear/regression/:independent/:dependent', async (req, res, next) => {
-  let response_data = { success: false, data: null, errorMessage: null }
-  try {
-    const valid = weatherController.predictFmtqik(req.params)
-    if (valid.error) {
-      throw new RouteError(new Error(valid.error.details[0].message), 1)
-    }
-
-    let result = await weatherController.weahterRegression(req.params.independent, req.params.dependent)
-    response_data.data = result
-    response_data.success = true
-    return res.status(200).send(response_data)
-  } catch (error) {
-    error.response_data = response_data
-    next(error)
-  }
-})
-
-/**
- * 核回歸分析
- *
- * @route GET api/weather/automic/regression/:independent/:dependent
- * @return {object} - {
- *  predicted_number: number
- * }
- */
-router.get('/automic/regression/:independent/:dependent', async (req, res, next) => {
-  let response_data = { success: false, data: null, errorMessage: null }
-  try {
-    const valid = weatherController.predictFmtqik(req.params)
-    if (valid.error) {
-      throw new RouteError(new Error(valid.error.details[0].message), 1)
-    }
-
-    response_data.data = await weatherController.weatherAutomicRegression(req.params.independent, req.params.dependent)
-    response_data.success = true
-    return res.status(200).send(response_data)
-  } catch (error) {
-    error.response_data = response_data
-    next(error)
-  }
-})
-
-/**
- * 相關係數分析
- *
- * @route GET /correlation/coefficient/:independent/:dependent
- * @return {object} - {
- *  cc: number
- * }
- */
-router.get('/correlation/coefficient/:independent/:dependent', async (req, res, next) => {
-  let response_data = { success: false, data: null, errorMessage: null }
-  try {
-    const valid = weatherController.predictFmtqik(req.params)
-    if (valid.error) {
-      throw new RouteError(new Error(valid.error.details[0].message), 1)
-    }
-
-    let result = await weatherController.weatherCC(req.params.independent, req.params.dependent)
+    let { stock_id, type } = req.params
+    const result = await weatherController.predictStock(type, stock_id)
     response_data.success = true
     response_data.data = result
     return res.status(200).send(response_data)
   } catch (error) {
-    error.response_data = response_data
     next(error)
   }
 })

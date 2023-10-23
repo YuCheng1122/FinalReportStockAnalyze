@@ -1,58 +1,41 @@
-const { weatherAnaly } = require('../analysis/index')
-const { weatherModels } = require('../models/index2')
-const {ControllerError} = require('../../error_classes')
+const { stockModels } = require('../models/index2')
+const { AppError } = require('../config/error_classes')
 
-const predictFmtqik = (type, timestamp) => {
+const predictStock = (type, stock_id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let condition = type === 'sunny' ? 'w.status > 7' : type === 'cloudy' ? 'w.status >= 7' : 'w.precipitation > 0'
-      let time = timestamp === 'one' ? '1' : timestamp === 'three' ? '3' : '7'
-      let total = await weatherModels.selectWeatherCount(condition)
-      let higher = await weatherModels.selectWeatherWithType(condition, time)
-      let result = parseFloat((higher[0].count / total[0].count).toFixed(4))
-      resolve({ predict_rate: result })
+      // 取 stock_id 的基本資料
+      const stockinfo = await stockModels.getStockInfo(stock_id)
+
+      // 取 stock 的週漲跌幅
+      const stock_data_week = await stockModels.getChangeOfWeek(stock_id)
+      const change_week = (((stock_data_week[0].closing_price - stock_data_week[stock_data_week.length - 1].closing_price) / stock_data_week[stock_data_week.length - 1].closing_price).toFixed(4) * 100).toFixed(2)
+
+      // 抓取計算CC的原始數據
+      const analysis_data = await stockModels.selectWeatherWithStock(type, stock_id)
+      const independent_datas = analysis_data.map((item) => Number(item[type]))
+      const dependent_datas = analysis_data.map((item) => Number(item.price))
+
+      // 取分析資料 (回歸線性分析)
+      // const analysis_data = await weatherAnaly.simpleLinearRegression(type, stock_id)
+
+      // 回傳
+      resolve({
+        stockinfo: {
+          ...stockinfo,
+          change_week,
+        },
+        independent_datas,
+        dependent_datas,
+      })
     } catch (error) {
-      console.log(error.message)
-      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
+      if (error.source === 'SqlError') {
+        throw error
+      } else {
+        throw new AppError(error, 'ControllerError', 'predictStock', 3)
+      }
     }
   })
 }
 
-const weahterRegression = (independent, dependent) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let condition = type === 'sunny' ? 'w.status > 7' : type === 'cloudy' ? 'w.status >= 7' : 'w.precipitation > 0'
-      let total = await weatherModels.selectWeatherCount(condition)
-      let higher = await weatherModels.selectWeatherWithType(condition)
-      let result = parseFloat((higher[0].count / total[0].count).toFixed(4))
-      resolve(result)
-    } catch (error) {
-      console.log(error.message)
-      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
-    }
-  })
-}
-
-const weatherAutomicRegression = (independent, dependent) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let result = await weatherAnaly.atomicRegression(independent, dependent)
-      resolve(result)
-    } catch (error) {
-      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
-    }
-  })
-}
-
-const weatherCC = (independent, dependent) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let result = await weatherAnaly.correlationCoefficient(independent, dependent)
-      resolve(result)
-    } catch (error) {
-      reject(error.name === 'SqlError' ? error : new ControllerError(error, 3))
-    }
-  })
-}
-
-module.exports = { weahterRegression, weatherAutomicRegression, weatherCC, predictFmtqik }
+module.exports = { predictStock }
