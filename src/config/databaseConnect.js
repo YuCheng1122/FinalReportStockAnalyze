@@ -1,10 +1,14 @@
 const mysql = require('mysql2')
-
+const path = require('path')
+require('dotenv').config({
+  path: path.resolve(__dirname, '../../.env'),
+})
+const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST } = process.env
 const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USERNAME,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
+  host: DB_HOST,
+  user: DB_USERNAME,
+  database: DB_NAME,
+  password: DB_PASSWORD,
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
