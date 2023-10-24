@@ -1,5 +1,6 @@
 const express = require('express')
 const passport = require('passport')
+
 require('./src/config/passport')(passport)
 const routes = require('./src/routes')
 const { AppError } = require('./src/config/error_classes')
