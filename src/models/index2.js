@@ -3,4 +3,5 @@ module.exports = {
   fmtqikModels: require('./fmtqik.models'),
   commentModels: require('./comment.model'),
   stockModels: require('./stock.models')
+  newsModels: require('./news.model'),
 }

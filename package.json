@@ -27,7 +27,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pca-js": "^1.0.2",
-    "puppeteer": "^21.0.3",
+    "puppeteer": "^21.3.8",
     "sequelize": "^6.32.1",
     "simple-statistics": "^7.8.3",
     "tree-node-cli": "^1.6.0",

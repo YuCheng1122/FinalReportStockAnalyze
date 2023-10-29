@@ -1,9 +1,11 @@
 const express = require('express')
 const passport = require('passport')
+
 require('./src/config/passport')(passport)
 const routes = require('./src/routes')
 const { AppError } = require('./src/config/error_classes')
 const { handleError, handleInfo } = require('./src/config/log_creator')
+const newsRoutes = require('./src/routes/news.routes')
 require('dotenv').config()
 
 const app = express()
@@ -50,6 +52,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/user', prelogMiddleware, routes.userRoutes, errorlogMiddleware)
 app.use('/api/user/response', prelogMiddleware, routes.userResponseRoutes, errorlogMiddleware)
 app.use('/api/weather', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.weatherRedictRoutes, errorlogMiddleware)
+app.use('/api/news', prelogMiddleware, newsRoutes, errorlogMiddleware)
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`)
