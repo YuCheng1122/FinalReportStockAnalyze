@@ -3,7 +3,7 @@ const { AppError } = require('../config/error_classes')
 
 const createComment = async (insertValues) => {
   try {
-    await models.userResposeModels(insertValues)
+    await models.commentModels.insertComment(insertValues)
   } catch (error) {
     if (error.source === 'SqlError') {
       throw error

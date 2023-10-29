@@ -21,21 +21,21 @@ const logPrintf = printf((Info) => {
   return information
 })
 
-// if (process.env.NODE_ENV !== 'production') {
-//   logger.add(new winston.transports.Console({
-//     format: winston.format.simple(),
-//   }));
-// }
-
 const combinedLogger = winston.createLogger({
   level: 'info',
-  transports: [new transports.File({ filename: './files/logs/combine.log', level: 'info', format: combine(timestamp(), logPrintf) }), new transports.Console({ format: combine(colorize({ all: true }), timestamp(), consoleFormatter) })],
+  transports: [new transports.File({ filename: './files/logs/combine.log', level: 'info', format: combine(timestamp(), logPrintf) })],
 })
 
 const errorLogger = winston.createLogger({
   level: 'error',
   transports: [new transports.File({ filename: './files/logs/error.log', level: 'error', format: combine(timestamp(), logPrintf) })],
 })
+
+if (process.env.NODE_ENV === 'development') {
+  combinedLogger.add(new transports.Console(
+    { format: combine(colorize({ all: true }), timestamp(), consoleFormatter) }
+  ));
+}
 
 handleError = (err) => {
   combinedLogger.error({ message: err.message, source: err.source, errorLocation: err.errorLocation })

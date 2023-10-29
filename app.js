@@ -38,7 +38,6 @@ const errorlogMiddleware = (error, req, res, next) => {
     } else {
       response_data.errorMessage = error.message
     }
-    console.log(error)
     handleError(error)
   } catch (error) {
     handleError(new AppError(error, 'Middleware', 'errorlogMiddleware', 4))
@@ -49,9 +48,11 @@ const errorlogMiddleware = (error, req, res, next) => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/user', prelogMiddleware, routes.userRoutes, errorlogMiddleware)
-app.use('/api/user/response', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.userResponseRoutes, errorlogMiddleware)
+app.use('/api/user/response', prelogMiddleware, routes.userResponseRoutes, errorlogMiddleware)
 app.use('/api/weather', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.weatherRedictRoutes, errorlogMiddleware)
 
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`)
 })
+
+module.exports = {app,server}

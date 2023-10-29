@@ -85,7 +85,6 @@ const getGroup = (user_id) => {
 
 const deleteGroup = (user_id, group_name) => {
   return new Promise((resolve, reject) => {
-    console.log(user_id, group_name)
     let sql = 'DELETE FROM preferStock WHERE user_id = ? AND group_name = ?'
     db.query(sql, [user_id, group_name], (error, result) => {
       if (error) {
