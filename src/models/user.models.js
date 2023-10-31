@@ -16,7 +16,7 @@ const insertUser = (insertValues) => {
 
 const selectUser = (email) => {
   return new Promise((resolve, reject) => {
-    let sql = 'SELECT user_id, password, email FROM user WHERE email = ?'
+    let sql = 'SELECT user_id,name, password, email FROM user WHERE email = ?'
     db.query(sql, email, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectUser', 4))

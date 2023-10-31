@@ -28,7 +28,7 @@ const loginUser = async (insertValues) => {
     if (!valid) {
       throw new AppError(new Error('Password is not correct.'), 'ControllerError', 'createUser', 1)
     }
-    return { user_id: userData[0].user_id, email: userData[0].email }
+    return { user_id: userData[0].user_id,name: userData[0].name, email: userData[0].email }
   } catch (error) {
     if (error.source === 'SqlError' || error.source === 'ControllerError') {
       throw error

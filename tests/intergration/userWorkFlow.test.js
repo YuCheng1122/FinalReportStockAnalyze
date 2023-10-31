@@ -60,6 +60,7 @@ describe('Test the login user', () => {
       success: true,
       data: {
         user_id: expect.any(Number),
+        name: expect.any(String),
         email: expect.any(String),
         token: expect.any(String),
       },

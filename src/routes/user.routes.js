@@ -41,6 +41,7 @@ router.post('/register', async (req, res, next) => {
  * }
  * @returns {object} - {
  *  user_id: number,
+ *  name: string,
  *  email: string,
  *  token: string
  * }
