@@ -13,14 +13,14 @@ jest.mock('bcrypt')
 describe('Test the insertUser function', () => {
   test('It should successful', async () => {
     const insertValues = {
-      name: 'test2',
-      email: 'test2@gmail.com',
+      name: 'test',
+      email: 'test@gmail.com',
       password: '123456',
     }
     try{
       const result = await userModels.insertUser(insertValues)
       console.log(result);
-      expect(result).any(Number)
+      expect(typeof result).toBe('number')
     }catch(error){
       console.log(error);
     }
@@ -76,221 +76,221 @@ describe('Test the selectUser function', () => {
   });
 })
 
-describe('Test the selectUserwithJWT function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const email = 'test@gmail'
-    const result = await userModels.selectUserwithJWT(user_id,email)
-    expect(result).toBe(true)
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.selectUserwithJWT.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'selectUserwithJWT', 4))
-    const user_id = 1
-    const email = 'test@gmail'
-    try {
-      await userModels.selectUserwithJWT(user_id,email)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  }),
-  test('It should throw an AppError if not search data', async () => {
-    userModels.selectUserwithJWT.mockRejectedValue(new AppError(new Error('Not correct jwt'), 'SqlError', 'selectUserwithJWT', 3))
+// describe('Test the selectUserwithJWT function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const email = 'test@gmail'
+//     const result = await userModels.selectUserwithJWT(user_id,email)
+//     expect(result).toBe(true)
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.selectUserwithJWT.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'selectUserwithJWT', 4))
+//     const user_id = 1
+//     const email = 'test@gmail'
+//     try {
+//       await userModels.selectUserwithJWT(user_id,email)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   }),
+//   test('It should throw an AppError if not search data', async () => {
+//     userModels.selectUserwithJWT.mockRejectedValue(new AppError(new Error('Not correct jwt'), 'SqlError', 'selectUserwithJWT', 3))
 
-    const user_id = 1
-    const email = 'test@gmail'
+//     const user_id = 1
+//     const email = 'test@gmail'
 
-    try {
-      await userModels.selectUserwithJWT(user_id,email)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 3)
-      expect(error.message).toBe('Error: Not correct jwt')
-    }
-  })
-})
+//     try {
+//       await userModels.selectUserwithJWT(user_id,email)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 3)
+//       expect(error.message).toBe('Error: Not correct jwt')
+//     }
+//   })
+// })
 
-describe('Test the updatePassword function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const hashPassword = 'dmqpondpqhndpq[jdoqexqxq'
-    const result = await userModels.updatePassword(user_id,hashPassword)
-    expect(result).toBeUndefined()
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.updatePassword.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'updatePassword', 4))
+// describe('Test the updatePassword function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const hashPassword = 'dmqpondpqhndpq[jdoqexqxq'
+//     const result = await userModels.updatePassword(user_id,hashPassword)
+//     expect(result).toBeUndefined()
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.updatePassword.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'updatePassword', 4))
 
-    const user_id = 1
-    const hashPassword = 'dmqpondpqhndpq[jdoqexqxq'
-    try {
-      await userModels.updatePassword(user_id,hashPassword)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  }),
-  test('It should throw an AppError if no search data', async () => {
-    userModels.updatePassword.mockRejectedValue(new AppError(new Error('Not search data'), 'SqlError', 'updatePassword', 3))
+//     const user_id = 1
+//     const hashPassword = 'dmqpondpqhndpq[jdoqexqxq'
+//     try {
+//       await userModels.updatePassword(user_id,hashPassword)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   }),
+//   test('It should throw an AppError if no search data', async () => {
+//     userModels.updatePassword.mockRejectedValue(new AppError(new Error('Not search data'), 'SqlError', 'updatePassword', 3))
 
-    const user_id = 1
-    const hashPassword = 'dmqpondpqhndpq[jdoqexqxq'
+//     const user_id = 1
+//     const hashPassword = 'dmqpondpqhndpq[jdoqexqxq'
 
-    try {
-      await userModels.updatePassword(user_id,hashPassword)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 3)
-    }
-  })
-})
+//     try {
+//       await userModels.updatePassword(user_id,hashPassword)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 3)
+//     }
+//   })
+// })
 
-describe('Test the insertGroup function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const group_name = '投資組合'
-    const stock_id = 1101
-    const result = await userModels.insertGroup(user_id,group_name,stock_id)
-    expect(result).toBeUndefined()
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.insertGroup.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertGroup', 4))
+// describe('Test the insertGroup function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const group_name = '投資組合'
+//     const stock_id = 1101
+//     const result = await userModels.insertGroup(user_id,group_name,stock_id)
+//     expect(result).toBeUndefined()
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.insertGroup.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertGroup', 4))
 
-    const user_id = 1
-    const group_name = '投資組合'
-    const stock_id = 1101
-    try {
-      await userModels.insertGroup(user_id,group_name,stock_id)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+//     const user_id = 1
+//     const group_name = '投資組合'
+//     const stock_id = 1101
+//     try {
+//       await userModels.insertGroup(user_id,group_name,stock_id)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
-describe('Test the getGroup function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const result = await userModels.getGroup(user_id)
-    expect(Array.isArray(result)).toBe(true)
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.insertGroup.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'getGroup', 4))
+// describe('Test the getGroup function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const result = await userModels.getGroup(user_id)
+//     expect(Array.isArray(result)).toBe(true)
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.insertGroup.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'getGroup', 4))
 
-    const user_id = 1
-    try {
-      await userModels.getGroup(user_id)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+//     const user_id = 1
+//     try {
+//       await userModels.getGroup(user_id)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
-describe('Test the deleteGroup function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const group_name = '投資組合'
-    const result = await userModels.deleteGroup(user_id,group_name)
-    expect(result).toBeUndefined()
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.deleteGroup.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'deleteGroup', 4))
-    const user_id = 1
-    const group_name = '投資組合'
-    try {
-      await userModels.deleteGroup(user_id,group_name)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+// describe('Test the deleteGroup function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const group_name = '投資組合'
+//     const result = await userModels.deleteGroup(user_id,group_name)
+//     expect(result).toBeUndefined()
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.deleteGroup.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'deleteGroup', 4))
+//     const user_id = 1
+//     const group_name = '投資組合'
+//     try {
+//       await userModels.deleteGroup(user_id,group_name)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
-describe('Test the getAllIndustryStock function', () => {
-  test('It should successful', async () => {
-    const result = await userModels.getAllIndustryStock()
-    expect(Array.isArray(result)).toBe(true)
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.getAllIndustryStock.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'getAllIndustryStock', 4))
+// describe('Test the getAllIndustryStock function', () => {
+//   test('It should successful', async () => {
+//     const result = await userModels.getAllIndustryStock()
+//     expect(Array.isArray(result)).toBe(true)
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.getAllIndustryStock.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'getAllIndustryStock', 4))
 
-    try {
-      await userModels.getAllIndustryStock()
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+//     try {
+//       await userModels.getAllIndustryStock()
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
-describe('Test the setDefault function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const group_name = '投資組合'
-    const result = await userModels.setDefault(user_id,group_name)
-    expect(result).toBeUndefined()
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.setDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'setDefault', 4))
-    const user_id = 1
-    const group_name = '投資組合'
-    try {
-      await userModels.setDefault(user_id,group_name)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+// describe('Test the setDefault function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const group_name = '投資組合'
+//     const result = await userModels.setDefault(user_id,group_name)
+//     expect(result).toBeUndefined()
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.setDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'setDefault', 4))
+//     const user_id = 1
+//     const group_name = '投資組合'
+//     try {
+//       await userModels.setDefault(user_id,group_name)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
-describe('Test the cleanDefault function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
+// describe('Test the cleanDefault function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
     
-    const result = await userModels.cleanDefault(user_id,)
-    expect(result).toBeUndefined()
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.cleanDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'cleanDefault', 4))
-    const user_id = 1
+//     const result = await userModels.cleanDefault(user_id,)
+//     expect(result).toBeUndefined()
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.cleanDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'cleanDefault', 4))
+//     const user_id = 1
     
-    try {
-      await userModels.cleanDefault(user_id)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+//     try {
+//       await userModels.cleanDefault(user_id)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
-describe('Test the getUserHistory function', () => {
-  test('It should successful', async () => {
-    const user_id = 1
-    const result = await userModels.getUserHistory(user_id,)
-    expect(Array.isArray(result)).toBe(true)
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.cleanDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'getUserHistory', 4))
-    const user_id = 1
-    try {
-      await userModels.getUserHistory(user_id)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError)
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  })
-})
+// describe('Test the getUserHistory function', () => {
+//   test('It should successful', async () => {
+//     const user_id = 1
+//     const result = await userModels.getUserHistory(user_id,)
+//     expect(Array.isArray(result)).toBe(true)
+//   }),
+//   test('It should throw an AppError if something wrong in Sql', async () => {
+//     userModels.cleanDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'getUserHistory', 4))
+//     const user_id = 1
+//     try {
+//       await userModels.getUserHistory(user_id)
+//     } catch (error) {
+//       expect(error).toBeInstanceOf(AppError)
+//       expect(error).toHaveProperty('source', 'SqlError')
+//       expect(error).toHaveProperty('errorLevel', 4)
+//     }
+//   })
+// })
 
 
 

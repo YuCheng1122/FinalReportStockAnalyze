@@ -5,3 +5,11 @@ module.exports = {
   stockModels: require('./stock.models'),
   newsModels: require('./news.model'),
 }
+
+
+/**
+ * 
+ * 
+ * 
+ * 
+ */

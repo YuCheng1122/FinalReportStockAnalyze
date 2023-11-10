@@ -6,8 +6,10 @@ const insertUser = (insertValues) => {
     let sql = 'INSERT INTO user SET ?'
     db.query(sql, insertValues, (error, result) => {
       if (error) {
+        console.log(error)
         reject(new AppError(error, 'SqlError', 'insertUser', 4))
       } else {
+        console.log(result)
         resolve(result.insertId)
       }
     })

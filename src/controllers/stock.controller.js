@@ -1,13 +1,16 @@
-const { getStockInfo } = require('../models/stock.models')
+const { stockModels } = require('../models/index2')
 const { AppError } = require('../config/error_classes')
 
-const getStockInfoController = async (req, res, next) => {
+const getStockInfoController = async (stock_id) => {
   try {
-    const stock_id = req.params.stock_id
-    const stockInfo = await getStockPePb(stock_id)
-    res.json(stockInfo)
+    const stockInfo = await stockModels.getStockPePb(stock_id)
+    return stockInfo
   } catch (error) {
-    next(error)
+    if (error.source === 'SqlError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'createComment', 3)
+    }
   }
 }
 module.exports = {getStockInfoController}
