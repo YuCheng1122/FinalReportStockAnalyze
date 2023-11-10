@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -12,13 +12,13 @@ module.exports = {
       stock_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Stock',
+          model: 'Stock', // 確保這裡的模型名稱與你的資料庫結構相符
           key: 'stock_id',
         },
         allowNull: true,
       },
       date: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY, // 使用 DATEONLY 來儲存不帶時間的日期
         allowNull: false,
       },
       trade_volume: {
@@ -61,10 +61,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
-    })
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('stock_day_all')
+    await queryInterface.dropTable('stock_day_all');
   },
-}
+};
