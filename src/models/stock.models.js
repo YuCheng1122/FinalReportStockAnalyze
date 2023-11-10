@@ -1,8 +1,33 @@
 const db = require('../config/databaseConnect')
 const { AppError } = require('../config/error_classes')
 
-// 獲取特定pe, pb
+// 獲取特定股票詳細資訊
 const getStockInfo = (stock_id) => {
+  return new Promise((resolve, reject) => {
+    // best one sql
+    // SELECT * FROM stock s
+    // JOIN stock_day_all sda ON s.stock_id = sda.stock_id
+    // WHERE s.stock_id = 1101 AND sda.create_date = (
+    //     SELECT MAX(create_date)
+    //     FROM stock_day_all
+    //     WHERE stock_id = 1101
+    // );
+
+    const sql = 'SELECT s.stock_id, s.name, sda.closing_price, sda.change, sda.trade_volume  FROM stock s JOIN stock_day_all sda ON s.stock_id=sda.stock_id WHERE s.stock_id=? ORDER BY create_date DESC LIMIT 1'
+    db.query(sql, stock_id, (error, result) => {
+      if (error) {
+        reject(new AppError(error, 'SqlError', 'getStockInfo', 4))
+      } else if (result.length === 0) {
+        reject(new AppError(new Error('Not seach data'), 'SqlError', 'getStockInfo', 3))
+      } else {
+        resolve(result[0])
+      }
+    })
+  })
+}
+
+// 獲取特定pe, pb
+const getStockPePb = (stock_id) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT stock_id, name, p_e_ratio, p_b_ratio FROM bwibbu_all'
     db.query(sql, stock_id, (error, result) => {
@@ -48,4 +73,4 @@ const selectWeatherWithStock = (type, stock_id) => {
   })
 }
 
-module.exports = { getStockInfo, getChangeOfWeek, selectWeatherWithStock }
+module.exports = { getStockInfo, getStockPePb, getChangeOfWeek, selectWeatherWithStock }

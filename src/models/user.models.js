@@ -8,7 +8,7 @@ const insertUser = (insertValues) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'insertUser', 4))
       } else {
-        resolve()
+        resolve(result.insertId)
       }
     })
   })
@@ -18,6 +18,19 @@ const selectUser = (email) => {
   return new Promise((resolve, reject) => {
     let sql = 'SELECT user_id,name, password, email FROM user WHERE email = ?'
     db.query(sql, email, (error, result) => {
+      if (error) {
+        reject(new AppError(error, 'SqlError', 'selectUser', 4))
+      } else {
+        resolve(result)
+      }
+    })
+  })
+}
+
+const deleteUser = (user_id) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'DELETE FROM user WHERE user_id = ?'
+    db.query(sql, user_id, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectUser', 4))
       } else {
@@ -49,7 +62,7 @@ const updatePassword = (user_id, hashPassword) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'updatePassword', 4))
       } else if (result.affectedRows === 0) {
-        reject(new AppError(new Error('Not search data'), 'SqlError', 'selectUserwithJWT', 4))
+        reject(new AppError(new Error('Not search data'), 'SqlError', 'updatePassword', 4))
       } else {
         resolve(result[0])
       }
@@ -148,4 +161,4 @@ const getUserHistory = (user_id) => {
   })
 }
 
-module.exports = { insertUser, selectUser, updatePassword, insertGroup, getGroup, deleteGroup, getAllIndustryStock, setDefault, cleanDefault, selectUserwithJWT, getUserHistory }
+module.exports = { insertUser, selectUser, updatePassword, insertGroup, getGroup, deleteGroup, getAllIndustryStock, setDefault, cleanDefault, selectUserwithJWT, getUserHistory, deleteUser }
