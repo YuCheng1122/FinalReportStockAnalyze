@@ -1,20 +1,31 @@
 const request = require('supertest')
-const { app, server } = require('../../app')
+const { app } = require('../../app')
 const db = require('../../src/config/databaseConnect')
 
-//清出Server連線與DB連線
-afterAll((done) => {
-  if (server) {
-    server.close(() => {
-      db.end(() => {
-        done()
-      })
+const deleteComment = () => {
+  return new Promise((resolve, reject) => {
+    db.query('DELETE FROM comment', (error, result) => {
+      if (error) {
+        reject('DeleteComment have some problems.')
+      } else {
+        resolve()
+      }
     })
-  } else {
-    db.end(() => {
-      done()
-    })
+  })
+}
+
+let server
+beforeAll(async () => {
+  await deleteComment()
+  server = app.listen(0,() => {
+  })
+})
+
+afterAll(async () => {
+  if (server && server.close) {
+    await server.close()
   }
+  db.end()
 })
 
 describe('Test the submit comment', () => {

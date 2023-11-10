@@ -13,4 +13,4 @@ const createComment = async (insertValues) => {
   }
 }
 
-module.exports = createComment
+module.exports = {createComment}

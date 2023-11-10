@@ -37,6 +37,8 @@ if (process.env.NODE_ENV === 'development') {
   ));
 }
 
+
+
 handleError = (err) => {
   combinedLogger.error({ message: err.message, source: err.source, errorLocation: err.errorLocation })
   errorLogger.error({ message: err.message, source: err.source, errorLocation: err.errorLocation, stack: err.stack })

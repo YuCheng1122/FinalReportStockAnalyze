@@ -10,7 +10,7 @@ router.post('/create/comment', async (req, res, next) => {
     if (valid.error) {
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/create/comment', 2)
     }
-    await controll.userResponseController(req.body)
+    await controll.userResponseController.createComment(req.body)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {

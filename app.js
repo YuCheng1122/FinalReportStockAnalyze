@@ -54,8 +54,11 @@ app.use('/api/user/response', prelogMiddleware, routes.userResponseRoutes, error
 app.use('/api/weather', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.weatherRedictRoutes, errorlogMiddleware)
 app.use('/api/news', prelogMiddleware, newsRoutes, errorlogMiddleware)
 
-const server = app.listen(process.env.PORT, () => {
-  console.log(`Server is running on http://localhost:${process.env.PORT}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+  const port = process.env.PORT || 8080
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`)
+  })
+}
 
-module.exports = {app,server}
+module.exports = { app }

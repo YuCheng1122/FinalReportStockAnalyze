@@ -1,20 +1,59 @@
 const request = require('supertest')
-const { app, server } = require('../../app')
+const { app } = require('../../app')
 const db = require('../../src/config/databaseConnect')
+require('dotenv').config()
 
-// 清出Server連線與DB連線
-afterAll((done) => {
-  if (server) {
-    server.close(() => {
-      db.end(() => {
-        done()
-      })
+const deleteUser = () => {
+  return new Promise((resolve, reject) => {
+    db.query('DELETE FROM user', (error, result) => {
+      if (error) {
+        reject('DeleteUser have some problems.')
+      } else {
+        resolve()
+      }
     })
-  } else {
-    db.end(() => {
-      done()
+  })
+}
+
+const deletePreferStock = () => {
+  return new Promise((resolve, reject) => {
+    db.query('DELETE FROM preferstock', (error, result) => {
+      if (error) {
+        console.log(error)
+        reject('DeletePreferStock have some problems.')
+      } else {
+        resolve()
+      }
     })
+  })
+}
+
+const deleteHistory = () => {
+  return new Promise((resolve, reject) => {
+    db.query('DELETE FROM history', (error, result) => {
+      if (error) {
+        reject('DeleteHistory have some problems.')
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+let server
+beforeAll(async () => {
+  await deleteUser()
+  await deletePreferStock()
+  await deleteHistory()
+  server = app.listen(0,() => {
+  })
+})
+
+afterAll(async () => {
+  if (server && server.close) {
+    await server.close()
   }
+  db.end()
 })
 
 describe('Test the register user', () => {
@@ -32,20 +71,20 @@ describe('Test the register user', () => {
       errorMessage: null,
     })
   }),
-    test('It should response the status false', async () => {
-      const data = {
-        name: 'test',
-        email: 'test@gmail.com',
-        password: '123',
-      }
-      const result = await request(app).post('/api/user/register').send(data)
-      expect(result.statusCode).toBe(200)
-      expect(result.body).toEqual({
-        success: false,
-        data: null,
-        errorMessage: 'An error occured, Please contact relevant technoligists for assistance.',
-      })
+  test('It should response the status false', async () => {
+    const data = {
+      name: 'test',
+      email: 'test@gmail.com',
+      password: '123',
+    }
+    const result = await request(app).post('/api/user/register').send(data)
+    expect(result.statusCode).toBe(200)
+    expect(result.body).toEqual({
+      success: false,
+      data: null,
+      errorMessage: 'An error occured, Please contact relevant technoligists for assistance.',
     })
+  })
 })
 
 describe('Test the login user', () => {
@@ -68,32 +107,32 @@ describe('Test the login user', () => {
     })
     jwtToken = result.body.token
   }),
-    test('It should response the status false cause wrong email', async () => {
-      const data = {
-        email: 'testtest@gmail.com',
-        password: '123',
-      }
-      const result = await request(app).post('/api/user/login').send(data)
-      expect(result.statusCode).toBe(200)
-      expect(result.body).toEqual({
-        success: false,
-        data: null,
-        errorMessage: 'Error: Email is not correct.',
-      })
-    }),
-    test('It should response the status false cause wrong password', async () => {
-      const data = {
-        email: 'test@gmail.com',
-        password: '12345678',
-      }
-      const result = await request(app).post('/api/user/login').send(data)
-      expect(result.statusCode).toBe(200)
-      expect(result.body).toEqual({
-        success: false,
-        data: null,
-        errorMessage: 'Error: Password is not correct.',
-      })
+  test('It should response the status false cause wrong email', async () => {
+    const data = {
+      email: 'testtest@gmail.com',
+      password: '123',
+    }
+    const result = await request(app).post('/api/user/login').send(data)
+    expect(result.statusCode).toBe(200)
+    expect(result.body).toEqual({
+      success: false,
+      data: null,
+      errorMessage: 'Error: Email is not correct.',
     })
+  }),
+  test('It should response the status false cause wrong password', async () => {
+    const data = {
+      email: 'test@gmail.com',
+      password: '12345678',
+    }
+    const result = await request(app).post('/api/user/login').send(data)
+    expect(result.statusCode).toBe(200)
+    expect(result.body).toEqual({
+      success: false,
+      data: null,
+      errorMessage: 'Error: Password is not correct.',
+    })
+  })
 })
 
 describe('Test the updatepassword', () => {
@@ -124,14 +163,14 @@ describe('Test the updatepassword', () => {
       errorMessage: null,
     })
   }),
-    test('It should can login new password', async () => {
-      data = {
-        email: 'test@gmail.com',
-        password: '123456',
-      }
-      const loginResult = await request(app).post('/api/user/login').send(data)
-      expect(loginResult.statusCode).toBe(200)
-    })
+  test('It should can login new password', async () => {
+    data = {
+      email: 'test@gmail.com',
+      password: '123456',
+    }
+    const loginResult = await request(app).post('/api/user/login').send(data)
+    expect(loginResult.statusCode).toBe(200)
+  })
 })
 
 describe('Test the getlightup history', () => {

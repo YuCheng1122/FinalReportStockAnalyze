@@ -1,6 +1,6 @@
 const request = require('supertest')
 const { app, server } = require('../../app')
-const { db } = require('../test.config')
+const db = require('../../src/config/databaseConnect')
 
 afterAll((done) => {
   if (server) {

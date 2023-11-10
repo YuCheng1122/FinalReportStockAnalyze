@@ -27,40 +27,40 @@ describe('Test the createUser function', () => {
     })
     expect(bcrypt.hash).toHaveBeenCalledWith('123456', 10)
   }),
-    test('It should throw an AppError if something wrong in Sql', async () => {
-      userModels.insertUser.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
+  test('It should throw an AppError if something wrong in Sql', async () => {
+    userModels.insertUser.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
 
-      const insertValues = {
-        name: 'test',
-        email: 'test@gmail.com',
-        password: '123456',
-      }
+    const insertValues = {
+      name: 'test',
+      email: 'test@gmail.com',
+      password: '123456',
+    }
 
-      try {
-        await userControll.createUser(insertValues)
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-        expect(error).toHaveProperty('source', 'SqlError')
-        expect(error).toHaveProperty('errorLevel', 4)
-      }
-    }),
-    test('It should throw an AppError if something wrong in Controller', async () => {
-      bcrypt.hash.mockImplementation(new Error('Some controller error'))
+    try {
+      await userControll.createUser(insertValues)
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+      expect(error).toHaveProperty('source', 'SqlError')
+      expect(error).toHaveProperty('errorLevel', 4)
+    }
+  }),
+  test('It should throw an AppError if something wrong in Controller', async () => {
+    bcrypt.hash.mockImplementation(new Error('Some controller error'))
 
-      const insertValues = {
-        name: 'test',
-        email: 'test@gmail.com',
-        password: '123456',
-      }
+    const insertValues = {
+      name: 'test',
+      email: 'test@gmail.com',
+      password: '123456',
+    }
 
-      try {
-        await userControll.createUser(insertValues)
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-        expect(error).toHaveProperty('source', 'ControllerError')
-        expect(error).toHaveProperty('errorLevel', 3)
-      }
-    })
+    try {
+      await userControll.createUser(insertValues)
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+      expect(error).toHaveProperty('source', 'ControllerError')
+      expect(error).toHaveProperty('errorLevel', 3)
+    }
+  })
 })
 
 describe('Test the loginUser function', () => {
@@ -284,7 +284,7 @@ describe('Test the getGroup function', () => {
     userModels.getGroup.mockResolvedValue(mockData)
     const user_id = 1
     const result = await userControll.getGroup(user_id)
-    
+
     result[0].data.forEach((item) => {
       expect(item).toMatchObject({
         stock_id: expect.any(Number),
@@ -549,86 +549,86 @@ describe('Test the setDefaultCombo function', () => {
     expect(result).toBeUndefined()
     // 驗證是否正確使用依賴
     expect(userModels.cleanDefault).toHaveBeenCalledWith(user_id)
-    expect(userModels.setDefault).toHaveBeenCalledWith(user_id,group_name)
+    expect(userModels.setDefault).toHaveBeenCalledWith(user_id, group_name)
   }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.cleanDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
+    test('It should throw an AppError if something wrong in Sql', async () => {
+      userModels.cleanDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
 
-    const user_id = 1
-    const group_name = '投資組合1'
-    try {
-      await userControll.setDefaultCombo(user_id, group_name)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.setDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
+      const user_id = 1
+      const group_name = '投資組合1'
+      try {
+        await userControll.setDefaultCombo(user_id, group_name)
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+        expect(error).toHaveProperty('source', 'SqlError')
+        expect(error).toHaveProperty('errorLevel', 4)
+      }
+    }),
+    test('It should throw an AppError if something wrong in Sql', async () => {
+      userModels.setDefault.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
 
-    const user_id = 1
-    const group_name = '投資組合1'
-    try {
-      await userControll.setDefaultCombo(user_id, group_name)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  }),
-  test('It should throw an AppError if something wrong in Controller', async () => {
-    userControll.setDefaultCombo = jest.fn().mockImplementation(() => {
-      throw new AppError(new Error('Some controller error'), 'ControllerError', 'createGroup', 3)
+      const user_id = 1
+      const group_name = '投資組合1'
+      try {
+        await userControll.setDefaultCombo(user_id, group_name)
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+        expect(error).toHaveProperty('source', 'SqlError')
+        expect(error).toHaveProperty('errorLevel', 4)
+      }
+    }),
+    test('It should throw an AppError if something wrong in Controller', async () => {
+      userControll.setDefaultCombo = jest.fn().mockImplementation(() => {
+        throw new AppError(new Error('Some controller error'), 'ControllerError', 'createGroup', 3)
+      })
+
+      const user_id = 1
+      const group_name = '投資組合1'
+      try {
+        await userControll.setDefaultCombo(user_id, group_name)
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+        expect(error).toHaveProperty('source', 'ControllerError')
+        expect(error).toHaveProperty('errorLevel', 3)
+      }
     })
-
-    const user_id = 1
-    const group_name = '投資組合1'
-    try {
-      await userControll.setDefaultCombo(user_id, group_name)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-      expect(error).toHaveProperty('source', 'ControllerError')
-      expect(error).toHaveProperty('errorLevel', 3)
-    }
-  })
 })
 
 describe('Test the getHistory function', () => {
   test('It should successful', async () => {
     // 模擬依賴
     userModels.getUserHistory.mockResolvedValue([])
-    
+
     const user_id = 1
     const result = await userControll.getHistory(user_id)
     expect(Array.isArray(result)).toBe(true)
     // 驗證是否正確使用依賴
     expect(userModels.getUserHistory).toHaveBeenCalledWith(user_id)
   }),
-  test('It should throw an AppError if something wrong in Sql', async () => {
-    userModels.getUserHistory.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
+    test('It should throw an AppError if something wrong in Sql', async () => {
+      userModels.getUserHistory.mockRejectedValue(new AppError(new Error('Model have something wrong.'), 'SqlError', 'insertUser', 4))
 
-    const user_id = 1
-    try {
-      await userControll.getHistory(user_id)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-      expect(error).toHaveProperty('source', 'SqlError')
-      expect(error).toHaveProperty('errorLevel', 4)
-    }
-  }),
-  test('It should throw an AppError if something wrong in Controller', async () => {
-    userControll.getHistory = jest.fn().mockImplementation(() => {
-      throw new AppError(new Error('Some controller error'), 'ControllerError', 'createGroup', 3)
+      const user_id = 1
+      try {
+        await userControll.getHistory(user_id)
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+        expect(error).toHaveProperty('source', 'SqlError')
+        expect(error).toHaveProperty('errorLevel', 4)
+      }
+    }),
+    test('It should throw an AppError if something wrong in Controller', async () => {
+      userControll.getHistory = jest.fn().mockImplementation(() => {
+        throw new AppError(new Error('Some controller error'), 'ControllerError', 'createGroup', 3)
+      })
+
+      const user_id = 1
+      try {
+        await userControll.getHistory(user_id)
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
+        expect(error).toHaveProperty('source', 'ControllerError')
+        expect(error).toHaveProperty('errorLevel', 3)
+      }
     })
-
-    const user_id = 1
-    try {
-      await userControll.getHistory(user_id)
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError) // 檢查錯誤是否為 AppError 類型
-      expect(error).toHaveProperty('source', 'ControllerError')
-      expect(error).toHaveProperty('errorLevel', 3)
-    }
-  })
 })
