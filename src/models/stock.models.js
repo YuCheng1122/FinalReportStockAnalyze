@@ -13,7 +13,7 @@ const getStockInfo = (stock_id) => {
     //     WHERE stock_id = 1101
     // );
 
-    const sql = 'SELECT s.stock_id, s.name, sda.closing_price, sda.change, sda.trade_volume  FROM stock s JOIN stock_day_all sda ON s.stock_id=sda.stock_id WHERE s.stock_id=? ORDER BY create_date DESC LIMIT 1'
+    const sql = 'SELECT s.stock_id, s.name, sda.closing_price, sda.change, sda.trade_volume  FROM stock s JOIN stock_day_all sda ON s.stock_id=sda.stock_id WHERE s.stock_id=? ORDER BY sda.date DESC LIMIT 1'
     db.query(sql, stock_id, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'getStockInfo', 4))
@@ -26,17 +26,34 @@ const getStockInfo = (stock_id) => {
   })
 }
 
-// 獲取特定pe, pb
-const getStockPePb = (stock_id) => {
+// 獲取所有股票詳細資訊
+const getStockAllInfo = () => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT stock_id, name, p_e_ratio, p_b_ratio FROM bwibbu_all'
-    db.query(sql, stock_id, (error, result) => {
+    const sql = 'SELECT s.stock_id, s.name, sda.trade_volume, sda.trade_value,sda.`transaction`,CAST(sda.highest_price AS DOUBLE) as highest_price,CAST(sda.lowest_price AS DOUBLE) as lowest_price,CAST(sda.opening_price AS DOUBLE) as opening_price, CAST(sda.closing_price AS DOUBLE) as closing_price, CAST(sda.change AS DOUBLE) AS `change`, sda.date FROM stock s JOIN (SELECT stock_id, trade_volume, trade_value, opening_price, highest_price, lowest_price, closing_price,`change`,`transaction`,`date` FROM stock_day_all WHERE `date` = (SELECT MAX(`date`) FROM stock_day_all)) sda ON s.stock_id = sda.stock_id; '
+    console.log(sql)
+    db.query(sql, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'getStockInfo', 4))
       } else if (result.length === 0) {
         reject(new AppError(new Error('Not seach data'), 'SqlError', 'getStockInfo', 3))
       } else {
         resolve(result)
+      }
+    })
+  })
+}
+
+// 獲取特定pe, pb
+const getStockPePb = (stock_id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT a.stock_id, CAST(a.p_e_ratio AS DOUBLE) as p_e_ratio , CAST(a.p_b_ratio AS DOUBLE) as p_b_ratio, a.date FROM bwibbu_all a INNER JOIN (SELECT stock_id, MAX(date) AS max_date FROM bwibbu_all GROUP BY stock_id) b ON a.stock_id = b.stock_id AND a.date = b.max_date WHERE a.stock_id = ?;'
+    db.query(sql, [stock_id], (error, result) => {
+      if (error) {
+        reject(new AppError(error, 'SqlError', 'getStockInfo', 4))
+      } else if (result.length === 0) {
+        reject(new AppError(new Error('Not seach data'), 'SqlError', 'getStockInfo', 3))
+      } else {
+        resolve(result[0])
       }
     })
   })
@@ -61,8 +78,9 @@ const getChangeOfWeek = (stock_id) => {
 // 抓取天氣與特定股票同日期資料
 const selectWeatherWithStock = (type, stock_id) => {
   return new Promise((resolve, reject) => {
-    let sql = `SELECT ${['sunny', 'cloudy', 'rainny'].includes(type) ? 'w.status' : `'w.${type}`}, sda.closing_price, sda.date FROM weather w JOIN stock_day_all sda ON w.date = sda.date WHERE sda.stock_id = ?
+    let sql = `SELECT ${['sunny', 'cloudy'].includes(type) ? 'w.status' : type === 'rainny' ? 'w.precipitation' : `w.${type}`}, sda.closing_price, sda.date FROM weather w JOIN stock_day_all sda ON w.date = sda.date WHERE sda.stock_id = ?
     ${type === 'sunny' ? 'AND w.status < 7' : type === 'cloudy' ? 'AND w.status >= 7' : type === 'rainny' ? 'AND w.precipitation is not null' : ''} `
+    console.log(sql)
     db.query(sql, [stock_id], (error, results) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectWeatherWithStock', 4))
@@ -73,4 +91,4 @@ const selectWeatherWithStock = (type, stock_id) => {
   })
 }
 
-module.exports = { getStockInfo, getStockPePb, getChangeOfWeek, selectWeatherWithStock }
+module.exports = { getStockInfo, getStockAllInfo, getStockPePb, getChangeOfWeek, selectWeatherWithStock }

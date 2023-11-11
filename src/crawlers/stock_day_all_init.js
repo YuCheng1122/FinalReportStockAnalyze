@@ -20,8 +20,7 @@ const connection = mysql.createConnection({
   collation: 'utf8mb4_unicode_ci',
 })
 
-const stockCodes = ['2330','2303','2408','2454', '3231','3443','3661','6770']
-
+const stockCodes = ['2330', '2303', '2408', '2454', '3231', '3443']
 
 // [
 //   '1101',

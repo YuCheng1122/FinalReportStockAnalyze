@@ -19,7 +19,7 @@ module.exports = {
       },
       date: {
         type: Sequelize.DATEONLY, // 使用 DATEONLY 來儲存不帶時間的日期
-        allowNull: false,
+        allowNull: true,
       },
       trade_volume: {
         type: Sequelize.BIGINT,
