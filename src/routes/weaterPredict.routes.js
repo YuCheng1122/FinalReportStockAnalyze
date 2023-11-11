@@ -13,7 +13,7 @@ const { AppError } = require('../config/error_classes')
  *  stock_id: number,
  *  stock_name: string,
  *  stock_price: number,
- *  change: number,
+ *  change: number, 
  *  change_week: number,
  *  trade_volume: number,
  *  independent_datas: number[],

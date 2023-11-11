@@ -12,7 +12,7 @@ const predictStock = async (type, stock_id) => {
 
     // 抓取計算CC的原始數據
     const analysis_data = await stockModels.selectWeatherWithStock(type, stock_id)
-    const tag = type === 'sunny' || type === 'cloudy' ? 'status' : type === 'rainny'? 'precipitation': type
+    const tag = type === 'sunny' || type === 'cloudy' ? 'status' : type === 'rainny' ? 'precipitation' : type
     const independent_datas = analysis_data.map((item) => Number(item[tag]))
     const dependent_datas = analysis_data.map((item) => Number(item.closing_price))
 
@@ -20,14 +20,14 @@ const predictStock = async (type, stock_id) => {
     // const analysis_data = await weatherAnaly.simpleLinearRegression(type, stock_id)
 
     // 回傳
-    return ({
+    return {
       stockinfo: {
         ...stockinfo,
-        change_week,
+        change_week: Number(change_week),
       },
       independent_datas,
       dependent_datas,
-    })
+    }
   } catch (error) {
     if (error.source === 'SqlError') {
       throw error

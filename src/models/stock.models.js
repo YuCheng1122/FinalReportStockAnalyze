@@ -13,7 +13,7 @@ const getStockInfo = (stock_id) => {
     //     WHERE stock_id = 1101
     // );
 
-    const sql = 'SELECT s.stock_id, s.name, sda.closing_price, sda.change, sda.trade_volume  FROM stock s JOIN stock_day_all sda ON s.stock_id=sda.stock_id WHERE s.stock_id=? ORDER BY sda.date DESC LIMIT 1'
+    const sql = 'SELECT s.stock_id, s.name, CAST(sda.closing_price AS DOUBLE) as closing_price, CAST(sda.change AS DOUBLE) as `change`, sda.trade_volume  FROM stock s JOIN stock_day_all sda ON s.stock_id=sda.stock_id WHERE s.stock_id=? ORDER BY sda.date DESC LIMIT 1'
     db.query(sql, stock_id, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'getStockInfo', 4))
