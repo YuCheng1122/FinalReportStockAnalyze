@@ -29,8 +29,7 @@ const getStockInfo = (stock_id) => {
 // 獲取所有股票詳細資訊
 const getStockAllInfo = () => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT s.stock_id, s.name, sda.trade_volume, sda.trade_value,sda.`transaction`,CAST(sda.highest_price AS DOUBLE) as highest_price,CAST(sda.lowest_price AS DOUBLE) as lowest_price,CAST(sda.opening_price AS DOUBLE) as opening_price, CAST(sda.closing_price AS DOUBLE) as closing_price, CAST(sda.change AS DOUBLE) AS `change`, sda.date FROM stock s JOIN (SELECT stock_id, trade_volume, trade_value, opening_price, highest_price, lowest_price, closing_price,`change`,`transaction`,`date` FROM stock_day_all WHERE `date` = (SELECT MAX(`date`) FROM stock_day_all)) sda ON s.stock_id = sda.stock_id; '
-    console.log(sql)
+    const sql = 'SELECT s.stock_id, s.name, sda.trade_volume, sda.trade_value,sda.`transaction`,CAST(sda.highest_price AS DOUBLE) as highest_price,CAST(sda.lowest_price AS DOUBLE) as lowest_price,CAST(sda.opening_price AS DOUBLE) as opening_price, CAST(sda.closing_price AS DOUBLE) as closing_price, CAST(sda.change AS DOUBLE) AS `change`, sda.date FROM stock s JOIN stock_day_all sda ON s.stock_id = sda.stock_id ORDER BY s.stock_id'
     db.query(sql, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'getStockInfo', 4))
