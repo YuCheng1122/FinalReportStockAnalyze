@@ -90,4 +90,27 @@ const selectWeatherWithStock = (type, stock_id) => {
   })
 }
 
-module.exports = { getStockInfo, getStockAllInfo, getStockPePb, getChangeOfWeek, selectWeatherWithStock }
+// 更新股票基本資訊(爬蟲用)
+const updateStockFinanceInfo = async (insertValues) => {
+  const sql = 'UPDATE stock SET description = ?, ceo = ?, established_time = ?, headquater = ?, website = ?, staff_number = ?, market_value = ?, dividend_rate = ? WHERE stock_id = ?'
+  db.query(sql, insertValues, (error, result) => {
+    if (error) {
+      console.log(error)
+    }
+  })
+}
+
+const getStockDescription = (stock_id) => {
+  return new Promise((resolve,reject) => {
+    const sql = 'SELECT description, ceo, established_time, headquater, website ,staff_number, market_value, dividend_rate FROM stock WHERE stock_id = ?'
+    db.query(sql,stock_id,(error,result) => {
+      if(error){
+        reject(new AppError(error, 'Model', 'getStockDescription', 4))
+      }else{
+        resolve(result)
+      }
+    })
+  })
+}
+
+module.exports = { getStockInfo, getStockAllInfo, getStockPePb, getChangeOfWeek, selectWeatherWithStock, updateStockFinanceInfo, getStockDescription }
