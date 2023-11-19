@@ -3,5 +3,6 @@ module.exports = {
   weatherRedictRoutes: require('./weaterPredict.routes'),
   userResponseRoutes: require('./user_response.route'),
   newsRoutes: require('./news.routes'),
-  stockInfoRoutes: require('./stockInfo.routes')
+  stockInfoRoutes: require('./stockInfo.routes'),
+  taiwanIndexRoutes: require('./taiex.routes'),
 }

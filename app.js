@@ -52,7 +52,8 @@ app.use('/api/user', prelogMiddleware, routes.userRoutes, errorlogMiddleware)
 app.use('/api/user/response', prelogMiddleware, routes.userResponseRoutes, errorlogMiddleware)
 app.use('/api/weather', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.weatherRedictRoutes, errorlogMiddleware)
 app.use('/api/news', prelogMiddleware, routes.newsRoutes, errorlogMiddleware)
-app.use('/api/stock',prelogMiddleware,routes.stockInfoRoutes,errorlogMiddleware)
+app.use('/api/stock', prelogMiddleware, routes.stockInfoRoutes, errorlogMiddleware)
+app.use('/api/taiex', prelogMiddleware, routes.taiwanIndexRoutes, errorlogMiddleware)
 
 if (process.env.NODE_ENV !== 'test') {
   const port = process.env.PORT || 8080
