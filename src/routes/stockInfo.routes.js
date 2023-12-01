@@ -60,7 +60,7 @@ router.get('/all/info', async (req, res, next) => {
 /**
  * 獲取個股介紹
  * 
- * @route api/stock/description/:stock_id
+ * @route GET api/stock/description/:stock_id
  * @return {array} -
  * {
  *  description: string,
@@ -90,7 +90,7 @@ router.get('/description/:stock_id', async (req, res, next) => {
 /**
  * 獲取個股新聞
  *
- * @route api/stock/news/:stock_id
+ * @route GET api/stock/news/:stock_id
  * @return {Array} - {
  *  title: string,
  *  time: string,
@@ -114,9 +114,8 @@ router.get('/news/:stock_id', async (req, res, next) => {
 /**
  * 獲取個股資產負債表資訊(當季)
  *
- * @route api/stock/balance_sheet/:stock_id
+ * @route GET api/stock/balance_sheet/:stock_id
  * @return {Array} - {
- *  stock_id: string,
  *  cash_and_short_term_investment: string ,
  *  cash_and_short_term_investment_ycp: string,
  *  total_assets: string,
@@ -152,7 +151,7 @@ router.get('/balance_sheet/:stock_id', async (req, res, next) => {
 /**
  * 獲取個股損益表資訊(當季)
  *
- * @route api/stock/income_statement/:stock_id
+ * @route GET api/stock/income_statement/:stock_id
  * @return {Array} - {
  *  income: string,
  *  income_ycp: string,
@@ -185,7 +184,7 @@ router.get('/income_statement/:stock_id', async (req, res, next) => {
 })
 
 /**
- * @route api/stock/cash_flow_statement/:stock_id
+ * @route GET api/stock/cash_flow_statement/:stock_id
  * @return {Array} - {
  * 獲取個股現金流量表資訊(當季)
  *  net_income: string,
