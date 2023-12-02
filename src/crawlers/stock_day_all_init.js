@@ -5,7 +5,7 @@ require('dotenv').config({
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 const axios = require('axios')
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 const dbConfig = {
   host: 'localhost',
@@ -174,7 +174,7 @@ const stockCodes = ['2330', '2303', '2408', '2454', '3231', '3443', '2912', '300
 //   '9933',
 //   '9938',
 //   '9945',
-// ] 
+// ]
 
 const years = [2020, 2021, 2022, 2023] // Changed 'year' to 'years'
 

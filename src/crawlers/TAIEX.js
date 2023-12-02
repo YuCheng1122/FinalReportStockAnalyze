@@ -5,7 +5,7 @@ require('dotenv').config({
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 const axios = require('axios')
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 const dbConfig = {
   host: 'localhost',
@@ -84,7 +84,7 @@ async function fetchAllData(years) {
   await Promise.all(pendingQueries)
 }
 
-const years = [2023] // Years to be processed
+const years = [2018, 2019, 2020, 2021, 2022, 2023] // Years to be processed
 
 fetchAllData(years)
   .then(() => {

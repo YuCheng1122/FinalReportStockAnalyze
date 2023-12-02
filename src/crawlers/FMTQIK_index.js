@@ -1,6 +1,6 @@
 const path = require('path')
 const axios = require('axios')
-const mysql = require('mysql')
+const mysql = require('mysql2')
 require('dotenv').config({
   path: path.resolve(__dirname, '../../.env'),
 })
