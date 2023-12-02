@@ -36,31 +36,8 @@ connection.connect((err) => {
 })
 
 // 設置OpenAI
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-})
-
-// 定義當天日期
-const today = moment().format('2023-11-26')
-const stockId = 2330 // 特定的 stock_id
-
-// 基於特定的 stock_id 和當天日期執行查詢
-connection.query('SELECT title FROM individual_new WHERE stock_id = ? AND create_date >= ? AND create_date < ?', [stockId, today, moment().add(1, 'days').format('YYYY-MM-DD')], async (error, results, fields) => {
-  if (error) {
-    console.error('Error querying database:', error)
-    return
-  }
-
-  const allTitles = results
-    .slice(0, 5)
-    .map((row) => row.title)
-    .join(', ')
-  console.log(allTitles)
-
-  function replaceFullWidthChars(str) {
-    return str.replace(/[：]/g, ':').replace(/[“”]/g, '"').replace(/[，]/g, ',').replace(/[．]/g, '.').replace(/[；]/g, ';')
-  }
-
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
+async function getSentimentAnalysis(titles) {
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4',
@@ -88,16 +65,7 @@ connection.query('SELECT title FROM individual_new WHERE stock_id = ? AND create
         },
         {
           role: 'user',
-          content: '金融占台股市值比僅次半導體 GDP貢獻12年來近零成長, 台積電賺很多股價「要死不活」 反觀死敵噴漲30％ 驚爆2大弱點, Nvidia beats TSMC and Intel to take top chip industry revenue crown for the first time, TSMC (TSM) Stock Declines While Market Improves: Some Information for Investors, Chip firms to invest US$210bn globally',
-        },
-        {
-          role: 'assistant',
-          content:
-            '{\n"1": {\n    "情緒": "中性",\n    "分數": 0,\n    "說明": "金融占台股市值比僅次半導體 GDP貢獻12年來近零成長，這是一個客觀的報告，並沒有表現出特別的正面或負面情緒。"\n},\n"2": {\n    "情緒": "負面",\n    "分數": -0.7,\n    "說明":"台積電賺很多股價「要死不活」 反觀死敵噴漲30％ 驚爆2大弱點，這種表現反映出對於台積電的擔憂和批評，屬於負向且悲觀的投資消息。"\n},\n"3":{\n   "情緒":"負面",\n   "分數":-0.6,\n   "說明":"Nvidia beats TSMC and Intel to take top chip industry revenue crown for the first time,此新聞顯示Nvidia在收入上超越了TSMC和Intel，可能導致TSMC投資者感到不安。"\n},\n"4":{\n   “情緒”：“負面”，\n   ”分數“：-0．5，\n   ”說明“：“TSMC (TSM) Stock Declines While Market Improves: Some Information for Investors，這種情況可能會對台積電的股價產生影響，並引起市場的擔憂。”\n},\n"5":{\n   “情緒”：“正面”，\n   ”分數“：0.6，\n   ”說明“：“Chip firms to invest US$210bn globally,此新聞顯示全球晶片公司將大規模投資，反映出行業的活躍和發展前景。”\n},\n"整體":{\n   “情緒”:”負面“，\n   ”分數“：-0．4，\n   ”說明“：“整體來看，這五個標題呈現出一種負',
-        },
-        {
-          role: 'user',
-          content: allTitles,
+          content: titles,
         },
       ],
       temperature: 0.99,
@@ -107,49 +75,68 @@ connection.query('SELECT title FROM individual_new WHERE stock_id = ? AND create
       presence_penalty: 0,
     })
 
-    if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
-      console.log('AI Response:', response.choices[0].message.content)
-      const apiResponse = response.choices[0].message.content
+    const rawResponse = response.choices[0].message.content
+    console.log('Raw API Response:', rawResponse)
 
-      // 將 API 回應的 content 轉換成 JSON 格式
-
-      // 解析 API 回應的 content，假設它是一個 JSON 字串
-      const sentimentResult = JSON.parse(replaceFullWidthChars(apiResponse))
-
-      // 遍歷情緒分析結果並插入資料庫
-      for (let i = 1; i <= 6; i++) {
-        // 假設最多有5個標題的分析結果
-        const result = sentimentResult[i.toString()]
-        if (result) {
-          const title = allTitles.split(', ')[i - 1] // 從合併的標題字串中分割並獲取對應標題
-          const insertQuery = 'INSERT INTO sentiment_analysis (stock_id, title, sentiment, score, description, create_date, update_date) VALUES (?, ?, ?, ?, ?, NOW(), NOW())'
-          connection.query(insertQuery, [stockId, title, result.情緒, result.分數, result.說明], (err, res) => {
-            if (err) {
-              console.error('Error inserting data:', err)
-              return
-            }
-            console.log('Inserted data:', res.insertId)
-          })
-        }
-      }
-      // 插入整體情緒分析
-      const overallSentiment = sentimentResult['整體']
-      if (overallSentiment) {
-        const insertOverallQuery = 'INSERT INTO sentiment_analysis (stock_id, title, sentiment, score, description, create_date, update_date) VALUES (?, ?, ?, ?, ?, NOW(), NOW())'
-        connection.query(insertOverallQuery, [stockId, '整體分析', overallSentiment.情緒, overallSentiment.分數, overallSentiment.說明], (err, res) => {
-          if (err) {
-            console.error('Error inserting overall data:', err)
-            return
-          }
-          console.log('Inserted overall data:', res.insertId)
-        })
-      }
+    // 檢查是否為有效的 JSON 格式
+    if (rawResponse.startsWith('{') && rawResponse.endsWith('}')) {
+      return JSON.parse(replaceFullWidthChars(rawResponse))
     } else {
-      console.log('No valid response received')
+      throw new Error('Received invalid JSON response')
+    }
+  } catch (error) {
+    console.error('Error in getSentimentAnalysis:', error)
+    throw error
+  }
+}
+
+// 定義全形字符替換函數
+function replaceFullWidthChars(str) {
+  return str.replace(/[：]/g, ':').replace(/[“”]/g, '"').replace(/[，]/g, ',').replace(/[．]/g, '.').replace(/[；]/g, ';').replace(/[）]/g, ')').replace(/[（]/g, '(')
+}
+//定義資料庫寫入函數
+async function insertSentimentResults(stockId, sentimentResults, titles) {
+  for (let i = 1; i <= 5; i++) {
+    const result = sentimentResults[i.toString()]
+    if (result) {
+      const title = titles.split(', ')[i - 1]
+      const insertQuery = 'INSERT INTO sentiment_analysis (stock_id, title, sentiment, score, description, create_date, update_date) VALUES (?, ?, ?, ?, ?, NOW(), NOW())'
+      await connection.promise().query(insertQuery, [stockId, title, result.情緒, result.分數, result.說明])
+      console.log('Inserted data for title:', title)
+    }
+  }
+
+  const overallSentiment = sentimentResults['整體']
+  if (overallSentiment) {
+    const insertOverallQuery = 'INSERT INTO sentiment_analysis (stock_id, title, sentiment, score, description, create_date, update_date) VALUES (?, ?, ?, ?, ?, NOW(), NOW())'
+    await connection.promise().query(insertOverallQuery, [stockId, '整體分析', overallSentiment.情緒, overallSentiment.分數, overallSentiment.說明])
+    console.log('Inserted overall sentiment analysis')
+  }
+}
+
+//處理單一股票的函數
+async function processStock(stockId, date) {
+  const query = 'SELECT title FROM individual_new WHERE stock_id = ? AND create_date >= ? AND create_date < ?'
+  const [results] = await connection.promise().query(query, [stockId, date, moment(date).add(1, 'day').format('YYYY-MM-DD')])
+
+  const allTitles = results.map((row) => row.title).join(', ')
+  console.log(allTitles)
+
+  const sentimentResults = await getSentimentAnalysis(allTitles)
+  await insertSentimentResults(stockId, sentimentResults, allTitles)
+}
+//主程式
+;(async () => {
+  const today = moment().format('2023-11-26')
+  const stockIds = [2330, 2345] // 示例股票 ID 數組
+
+  try {
+    for (const stockId of stockIds) {
+      await processStock(stockId, today)
     }
   } catch (err) {
-    console.error('Error processing titles:', err)
+    console.error('Error processing stocks:', err)
+  } finally {
+    connection.end()
   }
-  // 關閉資料庫連接
-  connection.end()
-})
+})()
