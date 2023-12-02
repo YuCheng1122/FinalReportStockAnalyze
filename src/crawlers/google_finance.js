@@ -5,6 +5,10 @@ require('dotenv').config({
   path: path.resolve(__dirname, '../../.env'),
 })
 
+const wait = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 const getStockInformation = async (stock_id) => {
   try {
     const response = await axios.get(`https://serpapi.com/search.json?engine=google_finance&hl=zh-tw&q=${stock_id}%3ATPE&api_key=${process.env.SERP_API_KEY}`)
@@ -14,15 +18,22 @@ const getStockInformation = async (stock_id) => {
       news: response.data.news_results, // 新聞
       financials: response.data.financials, // 財報資訊(但只能最新一季的)
     }
+    console.log(stock_id)
     return result
   } catch (error) {
     return error
   }
 }
 
+
 const main = async () => {
+<<<<<<< HEAD
   const stock_array = [2330, 2303, 2408, 2454, 3231, 3443]
   // const stock_array = [2408]
+=======
+  const stock_array = ['2408', '2454', '3231', '3443', '2912', '3008', '3045', '4904', '4938',  '6505', '9904', '1227', '1319', '1440', '1477', '1504', '1536', '1605', '1707', '1717', '1722', '1723', '1789', '1802', '2015', '2049', '2059', '2101', '2103', '2106', '2201', '2204', '2206', '2231', '2313', '2327', '2345', '2347', '2352', '2353', '2355', '2356', '2360', '2362', '2376', '2377', '2379', '2383', '2385', '2392', '2408',  '2449', '2451', '2498', '2542', '2603', '2609', '2610', '2615', '2618', '2707', '2809', '2812', '2867', '2903', '2915', '3034', '3037', '3044', '3189', '3231', '3682', '4958', '5522', '6176', '6239', '6269', '6285', '6414', '6456', '8150', '8454', '8464', '9907', '9910', '9917', '9921', '9933', '9938', '9945','1101', '1102', '1216', '1301', '1303', '1326', '1402', '1476', '2002', '2105', '2207', '2301', '2303', '2308', '2317', '2324', '2330', '2354', '2357', '2382', '2395', '2408', '2409', '2412', '2474']
+
+>>>>>>> 985ec37d54ee19e8f9cfa18e74f01de2ea882f8d
   const add_stock_table_value = []
   const insert_income_statement_value = []
   const insert_cash_flow_statement_value = []
@@ -34,7 +45,7 @@ const main = async () => {
       // 新增stock欄位值
       // stock_id , description, ceo, established_time, headquater, website ,staff_number, market_value, dividend_rate
       const data = await getStockInformation(stock_id)
-      const description = data.about[0].description.snippet ? data.about[0].description.snippet : null
+      const description = data.about[0].description ? (data.about[0].description.snippet ? data.about[0].description.snippet : null) : null
       let ceo = null
       let established_time = null
       let headquater = null
@@ -144,6 +155,7 @@ const main = async () => {
         cash_flow_statement_result.push(item.change)
       }
       insert_cash_flow_statement_value.push([stock_id, data.financials[2].results[0].date, ...cash_flow_statement_result])
+      await wait(4000)
     } catch (error) {
       console.log(error)
     }
@@ -223,7 +235,7 @@ main()
  * operating_cash, 營運現金
  * operating_cash_ycp
  * investment_cash, 投資現金,
- *  investment_cash_ycp
+ * investment_cash_ycp
  * financing_cash, 融資現金
  * financing_cash_ycp ,
  * net_change_in_cash, 現金變動淨額

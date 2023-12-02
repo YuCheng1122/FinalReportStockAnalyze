@@ -1,4 +1,4 @@
-const { stockModels, incomeStatementModels, balanceSheetModels, cashFlowStatementModels, individualNewModels } = require('../models/index2')
+const { stockModels, incomeStatementModels, balanceSheetModels, cashFlowStatementModels, individualNewModels, financialStatementModels } = require('../models/index2')
 const { AppError } = require('../config/error_classes')
 
 const getStockAllInfoController = async () => {
@@ -92,4 +92,17 @@ const getCashFlowStatement = async (stock_id) => {
   }
 }
 
-module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getBalanceSheet, getIncomeStatement, getCashFlowStatement, getStockNews }
+const getHistoryFinancialStatement = async(stock_id) => {
+  try{
+    const results = await financialStatementModels.getData(stock_id)
+    return results
+  }catch(error){
+    if (error.source === 'SqlError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'getCashFlowStatement', 3)
+    }
+  }
+}
+
+module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getBalanceSheet, getIncomeStatement, getCashFlowStatement, getStockNews, getHistoryFinancialStatement }

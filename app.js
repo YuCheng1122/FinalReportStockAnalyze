@@ -1,6 +1,6 @@
 const express = require('express')
 const passport = require('passport')
-
+const cors = require('cors')
 require('./src/config/passport')(passport)
 const routes = require('./src/routes')
 const { AppError } = require('./src/config/error_classes')
@@ -48,9 +48,10 @@ const errorlogMiddleware = (error, req, res, next) => {
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 app.use('/api/user', prelogMiddleware, routes.userRoutes, errorlogMiddleware)
 app.use('/api/user/response', prelogMiddleware, routes.userResponseRoutes, errorlogMiddleware)
-app.use('/api/weather', prelogMiddleware, passport.authenticate('jwt', { session: false }), routes.weatherRedictRoutes, errorlogMiddleware)
+app.use('/api/weather', prelogMiddleware, routes.weatherRedictRoutes, errorlogMiddleware)
 app.use('/api/news', prelogMiddleware, routes.newsRoutes, errorlogMiddleware)
 app.use('/api/stock', prelogMiddleware, routes.stockInfoRoutes, errorlogMiddleware)
 app.use('/api/taiex', prelogMiddleware, routes.taiwanIndexRoutes, errorlogMiddleware)
