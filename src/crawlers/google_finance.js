@@ -21,7 +21,7 @@ const getStockInformation = async (stock_id) => {
 }
 
 const main = async () => {
-  const stock_array = [2330 ,2303, 2408, 2454, 3231, 3443]
+  const stock_array = [2330, 2303, 2408, 2454, 3231, 3443]
   // const stock_array = [2408]
   const add_stock_table_value = []
   const insert_income_statement_value = []

@@ -5,7 +5,7 @@ require('dotenv').config({
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 const axios = require('axios')
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 const dbConfig = {
   host: 'localhost',
