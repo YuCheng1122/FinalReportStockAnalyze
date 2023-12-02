@@ -8,4 +8,5 @@ module.exports = {
   balanceSheetModels: require('./balance_sheet.model'),
   cashFlowStatementModels: require('./cash_flow_statement.model'),
   individualNewModels: require('./individual_new.model'),
+  financialStatementModels: require('./financial_statement.model')
 }

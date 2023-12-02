@@ -215,4 +215,28 @@ router.get('/cash_flow_statement/:stock_id', async (req, res, next) => {
   }
 })
 
+/**
+ * 獲取個股歷史財報資料
+ * 
+ * @route GET /api/stock/history/financial_statement/:stock_id
+ * @return {Array} - {
+ *  year: number,
+ *  season: number,
+ *  link: string
+ * }[]
+ */
+router.get('/history/financial_statement/:stock_id', async(req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const stock_id = req.params.stock_id
+    const result = await stockController.getHistoryFinancialStatement(stock_id)
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
+
+
 module.exports = router
