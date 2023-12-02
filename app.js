@@ -46,16 +46,9 @@ const errorlogMiddleware = (error, req, res, next) => {
   return res.status(200).send(response_data)
 }
 
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  allowedHeaders: ['Content-Type', 'X-Requested-With', '*'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-}
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors(corsOptions))
+app.use(cors())
 app.use('/api/user', prelogMiddleware, routes.userRoutes, errorlogMiddleware)
 app.use('/api/user/response', prelogMiddleware, routes.userResponseRoutes, errorlogMiddleware)
 app.use('/api/weather', prelogMiddleware, routes.weatherRedictRoutes, errorlogMiddleware)
