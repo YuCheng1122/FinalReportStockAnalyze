@@ -3,12 +3,13 @@ const path = require('path')
 require('dotenv').config({
   path: path.resolve(__dirname, '../../.env'),
 })
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST } = process.env
+const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = process.env
 const db = mysql.createPool({
   host: DB_HOST,
   user: DB_USERNAME,
   database: DB_NAME,
   password: DB_PASSWORD,
+  port: DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
