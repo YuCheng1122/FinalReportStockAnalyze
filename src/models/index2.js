@@ -13,5 +13,6 @@ module.exports = {
   assetStatementsModels: require('./assetStatement.model'),
   balanceSheetLiabilitiesEquityModels: require('./balanceSheetLiabilitiesEquity.model'),
   incomeStatementsModels: require('./incomeStatement.model'),
-  cashFlowStatementModels: require('./cashFlowStatement.model')
+  cashFlowStatementModels: require('./cashFlowStatement.model'),
+  sentimentAnalysisModels: require('./sentiment_analysis.model')
 }

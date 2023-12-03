@@ -6,7 +6,8 @@ const {
   assetStatementsModels,
   balanceSheetLiabilitiesEquityModels,
   incomeStatementsModels,
-  cashFlowStatementModels
+  cashFlowStatementModels,
+  sentimentAnalysisModels
 } = require('../models/index2')
 const { AppError } = require('../config/error_classes')
 
@@ -179,4 +180,17 @@ const getCashFlowStatement = async(stock_id) => {
   }
 }
 
-module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getStockNews, getHistoryFinancialStatement, getHistoryDividendPolicy, getAssetStatements, getIncomeStatements, getBalanceSheetLiabilitiesEquity, getCashFlowStatement}
+const getSentimentAnalysis = async(stock_id) => {
+  try{
+    const result = await sentimentAnalysisModels.getData(stock_id)
+    return result
+  }catch(error){
+    if (error.source === 'SqlError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'getSentimentAnalysis', 3)
+    }
+  }
+}
+
+module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getStockNews, getHistoryFinancialStatement, getHistoryDividendPolicy, getAssetStatements, getIncomeStatements, getBalanceSheetLiabilitiesEquity, getCashFlowStatement, getSentimentAnalysis}
