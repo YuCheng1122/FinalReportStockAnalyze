@@ -22,8 +22,6 @@ const getArticlesOfToday = () => {
     db.query(sql, [today], (error, results) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'getArticlesOfToday', 4))
-      } else if (results.length === 0) {
-        reject(new AppError(new Error('No articles found for today'), 'SqlError', 'getArticlesOfToday', 3))
       } else {
         resolve(results)
       }

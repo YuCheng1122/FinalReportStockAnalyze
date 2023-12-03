@@ -1,10 +1,10 @@
 const { getAllArticles, getArticlesOfToday } = require('../models/news.model')
 const { AppError } = require('../config/error_classes')
 
-const fetchAllArticles = async (req, res) => {
+const fetchAllArticles = async () => {
   try {
     const articles = await getAllArticles()
-    res.status(200).json({ data: articles })
+    return articles
   } catch (error) {
     if (error.source === 'SqlError') {
       throw error
@@ -14,10 +14,10 @@ const fetchAllArticles = async (req, res) => {
   }
 }
 
-const fetchArticlesOfToday = async (req, res) => {
+const fetchArticlesOfToday = async () => {
   try {
     const articles = await getArticlesOfToday()
-    res.status(200).json({ data: articles })
+    return articles
   } catch (error) {
     if (error.source === 'SqlError') {
       throw error

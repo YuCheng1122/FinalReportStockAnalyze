@@ -16,7 +16,17 @@ const router = express.Router()
  *  update_date: date
  * }[]
  */
-router.get('/all', fetchAllArticles)
+router.get('/all', async (req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null}
+  try{
+    const response = await fetchAllArticles()
+    response_data.success = true
+    response_data.data = response
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
 
 /**
  * 獲取當天新聞文章
@@ -30,6 +40,16 @@ router.get('/all', fetchAllArticles)
  *  imageSrc: string,
  * }[]
  */
-router.get('/today', fetchArticlesOfToday)
+router.get('/today', async (req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null}
+  try{
+    const response = await fetchArticlesOfToday()
+    response_data.success = true
+    response_data.data = response
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
 
 module.exports = router
