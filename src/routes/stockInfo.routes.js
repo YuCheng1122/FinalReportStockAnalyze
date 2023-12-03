@@ -135,18 +135,18 @@ router.get('/news/:stock_id', async (req, res, next) => {
  *  date: string
  * }[]
  */
-router.get('/balance_sheet/:stock_id', async (req, res, next) => {
-  const response_data = { success: false, data: null, errorMessage: null }
-  try {
-    const stock_id = req.params.stock_id
-    const result = await stockController.getBalanceSheet(stock_id)
-    response_data.data = result
-    response_data.success = true
-    return res.status(200).send(response_data)
-  } catch (error) {
-    next(error)
-  }
-})
+// router.get('/balance_sheet/:stock_id', async (req, res, next) => {
+//   const response_data = { success: false, data: null, errorMessage: null }
+//   try {
+//     const stock_id = req.params.stock_id
+//     const result = await stockController.getBalanceSheet(stock_id)
+//     response_data.data = result
+//     response_data.success = true
+//     return res.status(200).send(response_data)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 /**
  * 獲取個股損益表資訊(當季)
@@ -170,18 +170,18 @@ router.get('/balance_sheet/:stock_id', async (req, res, next) => {
  *  date
  * }[]
  */
-router.get('/income_statement/:stock_id', async (req, res, next) => {
-  const response_data = { success: false, data: null, errorMessage: null }
-  try {
-    const stock_id = req.params.stock_id
-    const result = await stockController.getIncomeStatement(stock_id)
-    response_data.data = result
-    response_data.success = true
-    return res.status(200).send(response_data)
-  } catch (error) {
-    next(error)
-  }
-})
+// router.get('/income_statement/:stock_id', async (req, res, next) => {
+//   const response_data = { success: false, data: null, errorMessage: null }
+//   try {
+//     const stock_id = req.params.stock_id
+//     const result = await stockController.getIncomeStatement(stock_id)
+//     response_data.data = result
+//     response_data.success = true
+//     return res.status(200).send(response_data)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 /**
  * @route GET api/stock/cash_flow_statement/:stock_id
@@ -202,18 +202,18 @@ router.get('/income_statement/:stock_id', async (req, res, next) => {
  *  date: string
  * }[]
  */
-router.get('/cash_flow_statement/:stock_id', async (req, res, next) => {
-  const response_data = { success: false, data: null, errorMessage: null }
-  try {
-    const stock_id = req.params.stock_id
-    const result = await stockController.getCashFlowStatement(stock_id)
-    response_data.data = result
-    response_data.success = true
-    return res.status(200).send(response_data)
-  } catch (error) {
-    next(error)
-  }
-})
+// router.get('/cash_flow_statement/:stock_id', async (req, res, next) => {
+//   const response_data = { success: false, data: null, errorMessage: null }
+//   try {
+//     const stock_id = req.params.stock_id
+//     const result = await stockController.getCashFlowStatement(stock_id)
+//     response_data.data = result
+//     response_data.success = true
+//     return res.status(200).send(response_data)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 /**
  * 獲取個股歷史財報資料
@@ -265,6 +265,173 @@ router.get('/history/dividend_policy/:stock_id', async(req,res,next) => {
     next(error)
   }
 })
+
+/**
+ * 獲取個股資產資料(年季度)
+ * 
+ * @route GET /api/stock/financial/assetStatements/:stock_id
+ * @return {Array} - {
+		year: number // 年
+		quarter: number // 季度
+		Assets: string // 總資產
+		CurrentAssets: string // 流動資產
+		LongTermInvestment: string // 長期投資
+		ShortTermInvestment: string // 短期投資
+		FixedAssets: string // 固定資產
+		CashAndCashEquivalents: string // 現金及約當現金
+		AccountsAndNotesReceivable: string // 應收帳款及票據
+		Inventories: string // 存貨
+		ROA: string // ROA
+		ROAT4Q: string // 近四季ROA
+		CurrentRatio: string // 流動比
+		QuickRatio: string // 速動比
+		LongTermLiabilitiesRatio: string // 長期資金佔固定資產比率
+		AccountsAndNotesReceivableTurnoverRatio: string // 應收帳款周轉
+		InventoryTurnoverRatio: string // 存貨週轉
+		FixedAssetsTurnoverRatio: string // 固定資產週轉
+		AssetsTurnoverRatio: string // 總資產週轉
+ * }[]
+ */
+router.get('/financial/assetStatements/:stock_id', async(req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const stock_id = req.params.stock_id
+    const result = await stockController.getAssetStatements(stock_id)
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
+
+/**
+ * 獲取個股負債與股東權益資料(年季度)
+ * 
+ * @route GET /api/stock/financial/balanceSheetLiabilitiesEquity/:stock_id
+ * @return {Array} - {
+    "year": number // 年
+		"quarter": number // 季度
+    "liabilities": string, // 總負債
+    "currentLiabilities": string, // 流動負債
+    "longTermLiabilities": string, // 長期負債
+    "accountsAndNotesPayable": string, // 應付帳款及票據
+    "advanceReceipts": string, // 預收款項
+    "shortTermBorrowings": string, // 短期借款
+    "shortTermNotesAndBillsPayable": string, // 應付短期票券
+    "longTermLiabilitiesCurrentPortion": string, // 一年內到期長期負債
+    "equity": string, // 淨值
+    "commonStocks": string, // 普通股股本
+    "retainedEarnings": string, // 保留盈餘
+    "nav": string, // 每股淨值
+    "roe": string, // ROE
+    "roeT4Q": string, // 近四季ROE
+    "reinvestmentRate": string, // 盈再率
+    "debtRatio": string, // 負債比
+    "accountsAndNotesPayableTurnoverDays": string // 應付帳款週轉天數
+ * }[]
+ */
+router.get('/financial/balanceSheetLiabilitiesEquity/:stock_id', async(req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const stock_id = req.params.stock_id
+    const result = await stockController.getBalanceSheetLiabilitiesEquity(stock_id)
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
+
+/**
+ * 獲取個股現金流量資料(年季度)
+ * 
+ * @route GET /api/stock/financial/cashFlowStatement/:stock_id
+ * @return {Array} - {
+    "year": number // 年
+		"quarter": number // 季度
+    "depreciation": string, // 折舊
+    "amortization": string, // 攤銷
+    "operatingCashFlow": string, // 營業現金流
+    "investingCashFlow": string, // 投資現金流
+    "financingCashFlow": string, // 融資現金流
+    "freeCashFlow": string, // 自由現金流
+    "netCashFlow": string, // 淨現金流
+    "capex": string, // 資本支出
+    "operatingCashFlowPerShare": string, // 每股營業現金流入
+    "investingCashFlowPerShare": string, // 每股投資現金流出
+    "financingCashFlowPerShare": string, // 每股融資現金流入
+    "freeCashFlowPerShare": string, // 每股自由現金流入
+    "netCashFlowPerShare": string, // 每股淨現金流入
+    "interestCoverageRatio": string, // 利息保障倍數
+    "operatingCashFlowToCurrentLiabilitiesRatio": string, // 營業現金對流動負債比
+    "operatingCashFlowToLiabilitiesRatio": string, // 營業現金對負債比
+    "operatingCashFlowToNetIncomeRatio": string // 營業現金對稅後淨利比
+ * }[]
+ */
+router.get('/financial/cashFlowStatement/:stock_id', async(req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const stock_id = req.params.stock_id
+    const result = await stockController.getCashFlowStatement(stock_id)
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
+
+/**
+ * 獲取個股損益表資料(年季度)
+ * 
+ * @route GET /api/stock/financial/incomeStatements/:stock_id
+ * @return {Array} - {
+    "year": number, // 年
+    "quarter": number, // 季度
+    "revenue": string, // 營收
+    "grossProfit": string, // 毛利
+    "operatingExpenses": string, // 營業費用
+    "sellingExpenses": string, // 銷售費用
+    "administrativeExpenses": string, // 管理費用
+    "researchAndDevelopmentExpenses": string, // 研發費用
+    "operatingIncome": string, // 營業利益
+    "profitBeforeTax": string, // 稅前淨利
+    "netIncome": string, // 稅後淨利
+    "netIncomeAttributableToOwnersOfTheParent": string, // 母公司業主淨利
+    "eps": string, // 單季EPS
+    "epsQOQ": string, // 單季EPS季增率
+    "epsYOY": string, // 單季EPS年增率
+    "epsT4Q": string, // 近四季EPS
+    "epsT4QAvg": string, // 近四季平均EPS
+    "epsT4QQOQ": string, // 近4季EPS季增率
+    "epsT4QYOY": string, // 近4季EPS年增率
+    "grossMargin": string, // 毛利率
+    "operatingMargin": string, // 營業利益率
+    "profitBeforeTaxMargin": string, // 稅前淨利率
+    "netIncomeMargin": string, // 稅後淨利率
+    "incomeTaxToProfitBeforeTaxRatio": string, // 所得稅佔稅前淨利比
+    "operatingExpenseRatio": string, // 營業費用率
+    "researchAndDevelopmentExpensesToSalesRatio": string, // 研發費用率
+    "nonOperatingIncomeToProfitBeforeTax": string, // 業外收支佔稅前淨利比
+    "sellingExpensesToSalesRatio": string, // 銷售費用率
+    "administrativeExpensesToSalesRatio": string // 管理費用率
+ * }[]
+ */
+router.get('/financial/incomeStatements/:stock_id', async(req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const stock_id = req.params.stock_id
+    const result = await stockController.getIncomeStatements(stock_id)
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
+
 
 
 module.exports = router
