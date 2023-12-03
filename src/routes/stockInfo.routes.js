@@ -238,5 +238,33 @@ router.get('/history/financial_statement/:stock_id', async(req,res,next) => {
   }
 })
 
+/**
+ * 獲取個股歷史股利政策 
+ * 
+ * @route GET /api/stock/history/dividend_policy/:stock_id
+ * @return {Array} - {
+ *  announcedDate: string,
+ *  cashDividend: float,
+ *  stockDividend: float,
+ *  XDTradingDate: string,
+ *  XRTradingDate: string,
+ *  cashDividendPaidDate: string,
+ *  XDPriceRecoveryDays: string,
+ *  payoutType: string
+ * }[]
+ */
+router.get('/history/dividend_policy/:stock_id', async(req,res,next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try{
+    const stock_id = req.params.stock_id
+    const result = await stockController.getHistoryDividendPolicy(stock_id)
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  }catch(error){
+    next(error)
+  }
+})
+
 
 module.exports = router

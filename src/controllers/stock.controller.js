@@ -1,4 +1,12 @@
-const { stockModels, incomeStatementModels, balanceSheetModels, cashFlowStatementModels, individualNewModels, financialStatementModels } = require('../models/index2')
+const { 
+  stockModels, 
+  incomeStatementModels, 
+  balanceSheetModels, 
+  cashFlowStatementModels, 
+  individualNewModels, 
+  financialStatementModels,
+  dividendPolicyModels
+} = require('../models/index2')
 const { AppError } = require('../config/error_classes')
 
 const getStockAllInfoController = async () => {
@@ -100,9 +108,22 @@ const getHistoryFinancialStatement = async(stock_id) => {
     if (error.source === 'SqlError') {
       throw error
     } else {
-      throw new AppError(error, 'ControllerError', 'getCashFlowStatement', 3)
+      throw new AppError(error, 'ControllerError', 'getHistoryFinancialStatement', 3)
     }
   }
 }
 
-module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getBalanceSheet, getIncomeStatement, getCashFlowStatement, getStockNews, getHistoryFinancialStatement }
+const getHistoryDividendPolicy = async(stock_id) => {
+  try{
+    const result = await dividendPolicyModels.getData(stock_id)
+    return result
+  }catch(error){
+    if (error.source === 'SqlError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'getHistoryDividendPolicy', 3)
+    }
+  }
+}
+
+module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getBalanceSheet, getIncomeStatement, getCashFlowStatement, getStockNews, getHistoryFinancialStatement, getHistoryDividendPolicy }
