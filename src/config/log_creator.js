@@ -1,6 +1,7 @@
 const winston = require('winston')
 const { transports } = winston
 const { combine, timestamp, colorize, printf } = winston.format
+const { insertInfo, insertError } = require('../models/log.model')
 
 const consoleFormatter = printf((Info) => {
   return `[${Info.timestamp}] [${Info.level}] [${Info.message}]`
@@ -32,10 +33,29 @@ const errorLogger = winston.createLogger({
 })
 
 if (process.env.NODE_ENV === 'development') {
-  combinedLogger.add(new transports.Console(
-    { format: combine(colorize({ all: true }), timestamp(), consoleFormatter) }
-  ));
+  combinedLogger.add(new transports.Console({ format: combine(colorize({ all: true }), timestamp(), consoleFormatter) }))
 }
+
+combinedLogger.on('data', async (Info) => {
+  try {
+    if (Info.level === 'info') {
+      let body = Info.body ? JSON.stringify(Info.body) : null
+      let values = [Info.message, Info.level, body]
+      await insertInfo(values)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+errorLogger.on('data', async (Info) => {
+  try {
+    const insertValues = [Info.source, Info.errorLocation, Info.stack, Info.message, Info.level]
+    await insertError(insertValues)
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 handleError = (err) => {
   combinedLogger.error({ message: err.message, source: err.source, errorLocation: err.errorLocation })
