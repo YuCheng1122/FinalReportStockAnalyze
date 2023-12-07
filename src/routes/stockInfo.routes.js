@@ -383,6 +383,7 @@ router.get('/financial/cashFlowStatement/:stock_id', async(req,res,next) => {
   }
 })
 
+
 /**
  * 獲取個股損益表資料(年季度)
  * 
@@ -431,6 +432,7 @@ router.get('/financial/incomeStatements/:stock_id', async(req,res,next) => {
     next(error)
   }
 })
+
 
 router.get('/sentiment_analysis/:stock_id', async(req,res,next) => {
   const response_data = { success: false, data: null, errorMessage: null }

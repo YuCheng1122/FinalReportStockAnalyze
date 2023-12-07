@@ -5,6 +5,8 @@ require('./src/config/passport')(passport)
 const routes = require('./src/routes')
 const { AppError } = require('./src/config/error_classes')
 const { handleError, handleInfo } = require('./src/config/log_creator')
+
+require('./src/schedule')
 require('dotenv').config()
 
 const app = express()
@@ -21,7 +23,6 @@ const prelogMiddleware = (req, res, next) => {
     handleError(new AppError(error, 'Middleware', 'prelogMiddleware', 4))
   }
 }
-
 /**
  * Error handler
  *

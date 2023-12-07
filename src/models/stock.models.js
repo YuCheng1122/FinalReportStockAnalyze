@@ -77,9 +77,8 @@ const getChangeOfWeek = (stock_id) => {
 // 抓取天氣與特定股票同日期資料
 const selectWeatherWithStock = (type, stock_id) => {
   return new Promise((resolve, reject) => {
-    let sql = `SELECT ${['sunny', 'cloudy'].includes(type) ? 'w.status' : type === 'rainny' ? 'w.precipitation' : `w.${type}`}, sda.closing_price, sda.date FROM weather w JOIN stock_day_all sda ON w.date = sda.date WHERE sda.stock_id = ?
+    let sql = `SELECT ${['sunny', 'cloudy'].includes(type) ? 'w.status' : type === 'rainny' ? 'w.precipitation' : `w.${type}`}, sda.closing_price, sda.date FROM weather w JOIN stock_day_all sda ON DATE(w.date) = DATE(sda.date) WHERE sda.stock_id = ?
     ${type === 'sunny' ? 'AND w.status < 7' : type === 'cloudy' ? 'AND w.status >= 7' : type === 'rainny' ? 'AND w.precipitation is not null' : ''} `
-    console.log(sql)
     db.query(sql, [stock_id], (error, results) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectWeatherWithStock', 4))
