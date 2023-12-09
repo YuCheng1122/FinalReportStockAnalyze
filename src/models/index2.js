@@ -14,5 +14,10 @@ module.exports = {
   balanceSheetLiabilitiesEquityModels: require('./balanceSheetLiabilitiesEquity.model'),
   incomeStatementsModels: require('./incomeStatement.model'),
   cashFlowStatementModels: require('./cashFlowStatement.model'),
-  sentimentAnalysisModels: require('./sentiment_analysis.model')
+  sentimentAnalysisModels: require('./sentiment_analysis.model'),
+  bwibbuAllModels: require('./bwibbu_all.model'),
+  stockDayAllModels: require('./stock_day_all.model'),
+  googleNewsArticlesModels: require('./google_news_articles.model'),
+  miIndexModels: require('./mi_index.model'),
+  taiexModels: require('./taiex.model')
 }

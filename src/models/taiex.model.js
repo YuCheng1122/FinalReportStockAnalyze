@@ -31,4 +31,18 @@ const getAllTaiexData = () => {
   })
 }
 
-module.exports = { getTaiexDataByDate, getAllTaiexData }
+const insertData = (insertValues) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'INSERT INTO taiex_data(`date`, opening_index, highest_index, lowest_index, closing_index, create_date, update_date) VALUES (?)'
+    db.query(sql, [insertValues], (error, result) => {
+      if (error) {
+        console.log(error)
+        reject(new AppError(error, 'ModelError', 'insertData', 4))
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+module.exports = { getTaiexDataByDate, getAllTaiexData, insertData }

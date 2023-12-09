@@ -5,9 +5,9 @@ const insertData = async (insertData) => {
   const sql = 'INSERT INTO individual_new(stock_id,title,time,link,imageSrc) VALUES ?'
   db.query(sql, [insertData], (error, result) => {
     if (error) {
-      console.log(error)
+      reject(new AppError(error, 'Model', 'insertData', 4))
     } else {
-      console.log('新增各股新聞成功')
+      resolve()
     }
   })
 }
