@@ -180,7 +180,7 @@ const updateTaiexData = schedule.scheduleJob('* 0 * * *', async () => {
 //   } catch (error) {}
 // })
 
-module.exports = { updateBwibbu, updateStockDayAll, updateNews, updateIndividualNews, updateMiIndex, updateTaiexData, updateWeather }
+module.exports = { updateBwibbu, updateStockDayAll, updateNews, updateMiIndex, updateTaiexData }
 
 // 修改mi_index, taoex_data的create_date,update_date格式
 // 補資料與刪資料，再開始嘗試
