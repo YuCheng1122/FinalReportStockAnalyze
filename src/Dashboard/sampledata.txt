@@ -1,0 +1,21 @@
+選股條件:
+
+Dashboard 範例資料:
+1. 股票名稱: 台積電 -->文字
+2. 股票代碼: 2330 --> 文字
+3. 收盤價: $570 --> 文字
+4. 營收: incomestatements{revenue} --> 長條圖
+5. EPS YoY: incomestatements{epsYOY} --> 折線圖 
+6. EPS QoQ: incomestatements{epsQoQ} --> 折線圖和EPS YoY 放一起
+7. EPS: incomestatements{eps} --> 文字
+8. 歷年財報連結: financial_statement{year, season, link} --> 超連結
+9. 每股淨值 --> balancesheetliabilitiesequity{nav} --> 折線圖
+10. 季度: incomestatements{quarter} --> 文字
+11. 相關新聞: individual_new{title, time, link, imageSrc} --> 超連結+文字敘述(不確定是不是有套件只要有連結就會抓到網頁的縮圖類似notion裡面的bookmark)
+12. 毛利率: incomestatements{grossProfit/revenue} --> 折線圖
+13. P/E, P/B: bwibbu_all{p_e/ratio, p_b_ratio} --> 文字只需要當天的就好了
+14. 情緒分析: sentiment_analysis{score, title, sentiment} --> 雷達圖
+15. 情緒分析: sentiment_analysis{"title": "整體分析", score} --> 文字
+16. 查閱相關財務比率: assetstatements{roa, currentRatio:流動比率, quickRatio:速動比率, longTermLiabilitiesRatio:長期負債比率, AccountsAndNotesReceivableTurnoverRatio:應收帳款周轉率, InventoryTurnoverRatio:存貨週轉率, FixedAssetsTurnoverRatio:固定資產週轉率, AssetsTurnoverRatio:總資產週轉率}
+17. ROA: assetstatements{roa} --> 折線圖
+18. ROE: balancesheetliabilitiesequity{roe} --> 折線圖
