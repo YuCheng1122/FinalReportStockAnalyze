@@ -1,14 +1,4 @@
-const { 
-  stockModels, 
-  individualNewModels, 
-  financialStatementModels,
-  dividendPolicyModels,
-  assetStatementsModels,
-  balanceSheetLiabilitiesEquityModels,
-  incomeStatementsModels,
-  cashFlowStatementModels,
-  sentimentAnalysisModels
-} = require('../models/index2')
+const { stockModels, individualNewModels, financialStatementModels, dividendPolicyModels, assetStatementsModels, balanceSheetLiabilitiesEquityModels, incomeStatementsModels, cashFlowStatementModels, sentimentAnalysisModels, investmentTechModels } = require('../models/index2')
 const { AppError } = require('../config/error_classes')
 
 /**
@@ -126,11 +116,11 @@ const getStockNews = async (stock_id) => {
  * @param stock_id - stock_id 参数是我们要检索其财务报表历史记录的特定股票的标识符。
  * @returns 函数“getHistoryFinancialStatement”返回“financialStatementModels.getData(stock_id)”函数调用的结果。
  */
-const getHistoryFinancialStatement = async(stock_id) => {
-  try{
+const getHistoryFinancialStatement = async (stock_id) => {
+  try {
     const results = await financialStatementModels.getData(stock_id)
     return results
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -139,11 +129,11 @@ const getHistoryFinancialStatement = async(stock_id) => {
   }
 }
 
-const getHistoryDividendPolicy = async(stock_id) => {
-  try{
+const getHistoryDividendPolicy = async (stock_id) => {
+  try {
     const result = await dividendPolicyModels.getData(stock_id)
     return result
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -152,11 +142,11 @@ const getHistoryDividendPolicy = async(stock_id) => {
   }
 }
 
-const getAssetStatements = async(stock_id) => {
-  try{
+const getAssetStatements = async (stock_id) => {
+  try {
     const result = await assetStatementsModels.getData(stock_id)
     return result
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -170,11 +160,11 @@ const getAssetStatements = async(stock_id) => {
  * @param stock_id - stock_id 参数是特定股票的标识符。它用于检索该特定股票的损益表数据。
  * @returns 函数“getIncomeStatements”返回“incomeStatementsModels.getData(stock_id)”函数调用的结果。
  */
-const getIncomeStatements = async(stock_id) => {
-  try{
+const getIncomeStatements = async (stock_id) => {
+  try {
     const result = await incomeStatementsModels.getData(stock_id)
     return result
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -189,11 +179,11 @@ const getIncomeStatements = async(stock_id) => {
  * @returns
  * 函数“getBalanceSheetLiabilitiesEquity”返回“balanceSheetLiabilitiesEquityModels.getData(stock_id)”函数调用的结果。
  */
-const getBalanceSheetLiabilitiesEquity = async(stock_id) => {
-  try{
+const getBalanceSheetLiabilitiesEquity = async (stock_id) => {
+  try {
     const result = await balanceSheetLiabilitiesEquityModels.getData(stock_id)
     return result
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -202,17 +192,16 @@ const getBalanceSheetLiabilitiesEquity = async(stock_id) => {
   }
 }
 
-
 /**
  * getCashFlowStatement 函数检索给定股票 ID 的现金流量表数据。
  * @param stock_id - stock_id 参数是特定股票的标识符。它用于检索该特定股票的现金流量表数据。
  * @returns 函数“getCashFlowStatement”返回“cashFlowStatementModels.getData(stock_id)”函数调用的结果。
  */
-const getCashFlowStatement = async(stock_id) => {
-  try{
+const getCashFlowStatement = async (stock_id) => {
+  try {
     const result = await cashFlowStatementModels.getData(stock_id)
     return result
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -226,11 +215,11 @@ const getCashFlowStatement = async(stock_id) => {
  * @param stock_id - stock_id 参数是特定股票的标识符。它用于检索该特定股票的情绪分析数据。
  * @returns 函数“getSentimentAnalysis”返回“sentimentAnalysisModels.getData(stock_id)”函数调用的结果。
  */
-const getSentimentAnalysis = async(stock_id) => {
-  try{
+const getSentimentAnalysis = async (stock_id) => {
+  try {
     const result = await sentimentAnalysisModels.getData(stock_id)
     return result
-  }catch(error){
+  } catch (error) {
     if (error.source === 'SqlError') {
       throw error
     } else {
@@ -239,4 +228,49 @@ const getSentimentAnalysis = async(stock_id) => {
   }
 }
 
-module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getStockNews, getHistoryFinancialStatement, getHistoryDividendPolicy, getAssetStatements, getIncomeStatements, getBalanceSheetLiabilitiesEquity, getCashFlowStatement, getSentimentAnalysis}
+const stockPickingDebtRatio = async () => {
+  try {
+    const result = await investmentTechModels.getFinancialData()
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const stockPickingRoe = async () => {
+  try {
+    const result = await investmentTechModels.getHighROEFinancialData()
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const stockPickingFreeCashFlow = async () => {
+  try {
+    const result = await investmentTechModels.getPositiveCashFlowData()
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const stockPickingCurrentRatio = async () => {
+  try {
+    const result = await investmentTechModels.getFinancialDataWithCurrentRatio()
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const stockPickingEps = async () => {
+  try {
+    const result = await investmentTechModels.getFinancialData2023Q3()
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+module.exports = { getPePbController, getStockAllInfoController, getStockDescription, getStockNews, getHistoryFinancialStatement, getHistoryDividendPolicy, getAssetStatements, getIncomeStatements, getBalanceSheetLiabilitiesEquity, getCashFlowStatement, getSentimentAnalysis, stockPickingDebtRatio, stockPickingRoe, stockPickingFreeCashFlow, stockPickingCurrentRatio, stockPickingEps }

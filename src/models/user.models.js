@@ -74,7 +74,7 @@ const updatePassword = (user_id, hashPassword) => {
 
 const insertGroup = (insertValues) => {
   return new Promise((resolve, reject) => {
-    let sql = 'INSERT INTO preferStock(user_id,group_name,stock_id) VALUES ?'
+    let sql = 'INSERT INTO preferstock(user_id,group_name,stock_id) VALUES ?'
     db.query(sql, [insertValues], (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'insertGroup', 4))
@@ -87,7 +87,7 @@ const insertGroup = (insertValues) => {
 
 const getGroup = (user_id) => {
   return new Promise((resolve, reject) => {
-    let sql = 'WITH RankedStockData AS (SELECT sda.stock_id,sda.change,sda.opening_price,sda.closing_price,sda.highest_price,sda.lowest_price,ROW_NUMBER() OVER (PARTITION BY sda.stock_id ORDER BY sda.create_date DESC) AS RowNum FROM stock_day_all sda) SELECT s.stock_id,s.name,pf.group_name,rsd.change,rsd.opening_price,rsd.closing_price,rsd.highest_price,rsd.lowest_price FROM preferStock pf LEFT JOIN stock s ON pf.stock_id = s.stock_id LEFT JOIN RankedStockData rsd ON s.stock_id = rsd.stock_id AND rsd.RowNum = 1 WHERE pf.user_id = ? ORDER BY pf.group_name;'
+    let sql = 'WITH RankedStockData AS (SELECT sda.stock_id,sda.change,sda.opening_price,sda.closing_price,sda.highest_price,sda.lowest_price,ROW_NUMBER() OVER (PARTITION BY sda.stock_id ORDER BY sda.create_date DESC) AS RowNum FROM stock_day_all sda) SELECT s.stock_id,s.name,pf.group_name,rsd.change,rsd.opening_price,rsd.closing_price,rsd.highest_price,rsd.lowest_price FROM preferstock pf LEFT JOIN stock s ON pf.stock_id = s.stock_id LEFT JOIN RankedStockData rsd ON s.stock_id = rsd.stock_id AND rsd.RowNum = 1 WHERE pf.user_id = ? ORDER BY pf.group_name;'
     db.query(sql, [user_id], (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'getGroup', 4))
@@ -100,7 +100,7 @@ const getGroup = (user_id) => {
 
 const deleteGroup = (user_id, group_name) => {
   return new Promise((resolve, reject) => {
-    let sql = 'DELETE FROM preferStock WHERE user_id = ? AND group_name = ?'
+    let sql = 'DELETE FROM preferstock WHERE user_id = ? AND group_name = ?'
     db.query(sql, [user_id, group_name], (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'deleteGroup', 4))

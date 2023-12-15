@@ -207,9 +207,4 @@ const getFinancialData2023Q3 = () => {
   })
 }
 
-
-module.exports = { getFinancialData }
-module.exports = { getHighROEFinancialData }
-module.exports = { getFinancialDataWithCurrentRatio }
-module.exports = { getPositiveCashFlowData }
-module.exports = [getFinancialData2023Q3]
+module.exports = { getFinancialData, getHighROEFinancialData, getFinancialDataWithCurrentRatio, getPositiveCashFlowData, getFinancialData2023Q3}

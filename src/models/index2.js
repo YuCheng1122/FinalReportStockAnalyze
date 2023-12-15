@@ -19,5 +19,6 @@ module.exports = {
   stockDayAllModels: require('./stock_day_all.model'),
   googleNewsArticlesModels: require('./google_news_articles.model'),
   miIndexModels: require('./mi_index.model'),
-  taiexModels: require('./taiex.model')
+  taiexModels: require('./taiex.model'),
+  investmentTechModels: require('./investmentTech')
 }

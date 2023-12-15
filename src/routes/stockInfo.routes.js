@@ -217,7 +217,7 @@ router.get('/news/:stock_id', async (req, res, next) => {
 
 /**
  * 獲取個股歷史財報資料
- * 
+ *
  * @route GET /api/stock/history/financial_statement/:stock_id
  * @return {Array} - {
  *  year: number,
@@ -225,22 +225,22 @@ router.get('/news/:stock_id', async (req, res, next) => {
  *  link: string
  * }[]
  */
-router.get('/history/financial_statement/:stock_id', async(req,res,next) => {
+router.get('/history/financial_statement/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getHistoryFinancialStatement(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
 
 /**
- * 獲取個股歷史股利政策 
- * 
+ * 獲取個股歷史股利政策
+ *
  * @route GET /api/stock/history/dividend_policy/:stock_id
  * @return {Array} - {
  *  announcedDate: string,
@@ -253,15 +253,15 @@ router.get('/history/financial_statement/:stock_id', async(req,res,next) => {
  *  payoutType: string
  * }[]
  */
-router.get('/history/dividend_policy/:stock_id', async(req,res,next) => {
+router.get('/history/dividend_policy/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getHistoryDividendPolicy(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
@@ -292,15 +292,15 @@ router.get('/history/dividend_policy/:stock_id', async(req,res,next) => {
 		AssetsTurnoverRatio: string // 總資產週轉
  * }[]
  */
-router.get('/financial/assetStatements/:stock_id', async(req,res,next) => {
+router.get('/financial/assetStatements/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getAssetStatements(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
@@ -331,15 +331,15 @@ router.get('/financial/assetStatements/:stock_id', async(req,res,next) => {
     "accountsAndNotesPayableTurnoverDays": string // 應付帳款週轉天數
  * }[]
  */
-router.get('/financial/balanceSheetLiabilitiesEquity/:stock_id', async(req,res,next) => {
+router.get('/financial/balanceSheetLiabilitiesEquity/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getBalanceSheetLiabilitiesEquity(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
@@ -370,19 +370,18 @@ router.get('/financial/balanceSheetLiabilitiesEquity/:stock_id', async(req,res,n
     "operatingCashFlowToNetIncomeRatio": string // 營業現金對稅後淨利比
  * }[]
  */
-router.get('/financial/cashFlowStatement/:stock_id', async(req,res,next) => {
+router.get('/financial/cashFlowStatement/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getCashFlowStatement(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
-
 
 /**
  * 獲取個股損益表資料(年季度)
@@ -420,29 +419,148 @@ router.get('/financial/cashFlowStatement/:stock_id', async(req,res,next) => {
     "administrativeExpensesToSalesRatio": string // 管理費用率
  * }[]
  */
-router.get('/financial/incomeStatements/:stock_id', async(req,res,next) => {
+router.get('/financial/incomeStatements/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getIncomeStatements(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
 
-
-router.get('/sentiment_analysis/:stock_id', async(req,res,next) => {
+router.get('/sentiment_analysis/:stock_id', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
-  try{
+  try {
     const stock_id = req.params.stock_id
     const result = await stockController.getSentimentAnalysis(stock_id)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
-  }catch(error){
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * @route GET /api/stock/picking/debtRatio
+ * @return {Array} - {
+ * "stock_id": number,
+ * "name": string,
+ * "ROE": string,
+ * "closing_price": string,
+ * "eps": string,
+ * "epsYoY": string,
+ * "link": string
+ * }
+ */
+router.get('/picking/debtRatio', async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const result = await stockController.stockPickingDebtRatio()
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * @route GET /api/stock/picking/Roe
+ * @return {Array} - {
+ * "stock_id": number,
+ * "name": string,
+ * "ROE": string,
+ * "closing_price": string,
+ * "eps": string,
+ * "epsYoY": string,
+ * "link": string
+ * }
+ */
+router.get('/picking/Roe', async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const result = await stockController.stockPickingRoe()
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * @route GET /api/stock/picking/freeCashFlow
+ * @return {Array} - {
+ * "stock_id": number,
+ * "name": string,
+ * "ROE": string,
+ * "closing_price": string,
+ * "eps": string,
+ * "epsYoY": string,
+ * "link": string
+ * }
+ */
+router.get('/picking/freeCashFlow', async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const result = await stockController.stockPickingFreeCashFlow()
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * @route GET /api/stock/picking/currentRatio
+ * @return {Array} - {
+ * "stock_id": number,
+ * "name": string,
+ * "ROE": string,
+ * "closing_price": string,
+ * "eps": string,
+ * "epsYoY": string,
+ * "link": string
+ * }
+ */
+router.get('/picking/currentRatio', async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const result = await stockController.stockPickingCurrentRatio()
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * @route GET /api/stock/picking/Eps
+ * @return {Array} - {
+ * "stock_id": number,
+ * "name": string,
+ * "ROE": string,
+ * "closing_price": string,
+ * "eps": string,
+ * "epsYoY": string,
+ * "link": string
+ * }
+ */
+router.get('/picking/Eps', async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const result = await stockController.stockPickingEps()
+    response_data.data = result
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
     next(error)
   }
 })
