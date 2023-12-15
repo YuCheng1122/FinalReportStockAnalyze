@@ -446,6 +446,8 @@ router.get('/sentiment_analysis/:stock_id', async (req, res, next) => {
 })
 
 /**
+ * 選股政策-負債比率(Warren Buffett debtRatio < 30%)
+ * 
  * @route GET /api/stock/picking/debtRatio
  * @return {Array} - {
  * "stock_id": number,
@@ -470,6 +472,8 @@ router.get('/picking/debtRatio', async (req, res, next) => {
 })
 
 /**
+ * 選股政策-ROE(/Warren Buffett ROE > 15%)
+ * 
  * @route GET /api/stock/picking/Roe
  * @return {Array} - {
  * "stock_id": number,
@@ -494,6 +498,8 @@ router.get('/picking/Roe', async (req, res, next) => {
 })
 
 /**
+ * 選股政策-自由現金流(Warren Buffett Free Cash Flow > 0)
+ * 
  * @route GET /api/stock/picking/freeCashFlow
  * @return {Array} - {
  * "stock_id": number,
@@ -518,6 +524,8 @@ router.get('/picking/freeCashFlow', async (req, res, next) => {
 })
 
 /**
+ * 選股政策-流動比率(Benjamin Graham currentRatio > 200%)
+ * 
  * @route GET /api/stock/picking/currentRatio
  * @return {Array} - {
  * "stock_id": number,
@@ -542,6 +550,8 @@ router.get('/picking/currentRatio', async (req, res, next) => {
 })
 
 /**
+ * 選股政策-EPS(Benjamin Graham eps > 0)
+ * 
  * @route GET /api/stock/picking/Eps
  * @return {Array} - {
  * "stock_id": number,
