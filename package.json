@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "ml-matrix": "^6.10.4",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "mysql": "^2.18.1",
     "mysql2": "^3.6.5",
     "node-schedule": "^2.1.1",

@@ -10,10 +10,11 @@ const router = express.Router()
  * @return {Array} - {
  *  name: string,
  *  title: string,
- *  time: string,
+ *  time: timstamp,
  *  link: string,
  *  imageSrc: string,
- *  update_date: date
+ *  source_name: string,
+ *  source_token: string
  * }[]
  */
 router.get('/all', async (req,res,next) => {
@@ -35,9 +36,11 @@ router.get('/all', async (req,res,next) => {
  * @return {Array} - {
  *  name: string,
  *  title: string,
- *  time: string,
+ *  time: timestamp,
  *  link: string,
  *  imageSrc: string,
+ *  source_name: string,
+ *  source_token: string
  * }[]
  */
 router.get('/today', async (req,res,next) => {

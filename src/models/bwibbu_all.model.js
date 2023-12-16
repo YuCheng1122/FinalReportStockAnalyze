@@ -7,7 +7,7 @@ const insertData = (insertValues) => {
     db.query(sql, [insertValues], (error, result) => {
       if (error) {
         reject(new AppError(error, 'ModelError', 'insertData', 4))
-      }else{
+      } else {
         resolve()
       }
     })
