@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const cotroll = require('../controllers')
+const controll = require('../controllers')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 require('../config/passport')(passport)
@@ -23,7 +23,7 @@ router.post('/register', async (req, res, next) => {
     if (valid.error) {
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/register', 2)
     }
-    await cotroll.userControll.createUser(req.body)
+    await controll.userControll.createUser(req.body)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -53,7 +53,7 @@ router.post('/login', async (req, res, next) => {
     if (valid.error) {
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/login', 2)
     }
-    let result = await cotroll.userControll.loginUser(req.body)
+    let result = await controll.userControll.loginUser(req.body)
     response_data.success = true
     let token = jwt.sign({ user_id: result.user_id, email: result.email }, process.env.JWT_SECRET_KEY)
     response_data.data = result
@@ -80,7 +80,7 @@ router.patch('/update/password', passport.authenticate('jwt', { session: false }
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/update/password', 2)
     }
 
-    await cotroll.userControll.updatePassword(req.user.user_id, req.body)
+    await controll.userControll.updatePassword(req.user.user_id, req.body)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -106,7 +106,7 @@ router.get('/lightup/history/:user_id', passport.authenticate('jwt', { session: 
     if (valid.error) {
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/lightup/history/:user_id', 2)
     }
-    const results = await cotroll.userControll.getHistory(req.params.user_id)
+    const results = await controll.userControll.getHistory(req.params.user_id)
     response_data.success = true
     response_data.data = results
     return res.status(200).send(response_data)
@@ -137,7 +137,7 @@ router.get('/lightup/history/:user_id', passport.authenticate('jwt', { session: 
 router.get('/getGroup', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let result = await cotroll.userControll.getGroup(req.user.user_id)
+    let result = await controll.userControll.getGroup(req.user.user_id)
     response_data.success = true
     response_data.data = result
     return res.status(200).send(response_data)
@@ -164,7 +164,7 @@ router.post('/createGroup', passport.authenticate('jwt', { session: false }), as
     }
 
     let { group_name, stock_id_array } = req.body
-    await cotroll.userControll.createGroup(req.user.user_id, group_name, stock_id_array)
+    await controll.userControll.createGroup(req.user.user_id, group_name, stock_id_array)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -186,7 +186,7 @@ router.delete('/deleteGroup', passport.authenticate('jwt', { session: false }), 
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/deleteGroup', 2)
     }
 
-    await cotroll.userControll.deleteGroup(req.user.user_id, req.body.group_name)
+    await controll.userControll.deleteGroup(req.user.user_id, req.body.group_name)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -215,7 +215,7 @@ router.patch('/updateGroup', passport.authenticate('jwt', { session: false }), a
     let old_group_name = req.body.old_group_name
     let new_group_name = req.body.new_group_name
     let stock_id_array = req.body.stock_id_array
-    await cotroll.userControll.updateGroup(req.user.user_id, old_group_name, new_group_name, stock_id_array)
+    await controll.userControll.updateGroup(req.user.user_id, old_group_name, new_group_name, stock_id_array)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {
@@ -239,7 +239,7 @@ router.patch('/updateGroup', passport.authenticate('jwt', { session: false }), a
 router.get('/all/industry/stock', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    let result = await cotroll.userControll.getAllIndustryStock()
+    let result = await controll.userControll.getAllIndustryStock()
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
@@ -264,7 +264,56 @@ router.patch('/set/default/combo', passport.authenticate('jwt', { session: false
       throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/set/default/combo', 2)
     }
 
-    await cotroll.userControll.setDefaultCombo(req.user.user_id, req.body.group_name)
+    await controll.userControll.setDefaultCombo(req.user.user_id, req.body.group_name)
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * 獲取所有小卡
+ *
+ * @route GET /api/user/all/cards
+ * @return {object} - {
+ *  card_id: number,
+ *  image_link: string,
+ *  type: string,
+ *  create_date: timestamp
+ * }
+ */
+router.get('/all/cards', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const results = await controll.userControll.getAllCards(req.user.user_id)
+    response_data.success = true
+    response_data.data = results
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * 儲存小卡
+ *
+ * @route POST /api/user/insert/card
+ * @param {object} - {
+ *  image_link: string,
+ *  type: string
+ * }
+ */
+router.post('/insert/card', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const valid = userValidation.insertCardVali(req.body)
+    if (valid.error) {
+      throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/insert/card', 2)
+    }
+    const insertValues = req.body
+    insertValues.user_id = req.user.user_id
+    await controll.userControll.createCards(insertValues)
     response_data.success = true
     return res.status(200).send(response_data)
   } catch (error) {

@@ -171,4 +171,22 @@ const getHistory = async (user_id) => {
   }
 }
 
-module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory }
+const getAllCards = async (user_id) => {
+  try{
+    const results = await models.cardModels.getData(user_id)
+    return results
+  }catch(error){
+    throw error
+  }
+}
+
+const createCards = async (insertValues) => {
+  try{
+    await models.cardModels.insertData(insertValues)
+    return 
+  }catch(error){
+    throw error    
+  }
+}
+
+module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory, getAllCards, createCards}

@@ -20,5 +20,6 @@ module.exports = {
   googleNewsArticlesModels: require('./google_news_articles.model'),
   miIndexModels: require('./mi_index.model'),
   taiexModels: require('./taiex.model'),
-  investmentTechModels: require('./investmentTech')
+  investmentTechModels: require('./investmentTech'),
+  cardModels: require('./card.model')
 }
