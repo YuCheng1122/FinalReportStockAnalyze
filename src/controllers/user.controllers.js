@@ -6,10 +6,14 @@ const createUser = async (insertValues) => {
   try {
     let { name, email, password } = insertValues
     let hashPassword = await bcrypt.hash(password, 10)
+    const userData = await models.userModels.selectUser(email)
+    if (userData.length > 0) {
+      throw new AppError(new Error('此信箱已被註冊.'), 'ControllerError', 'createUser', 1)
+    }
     await models.userModels.insertUser({ name, email, password: hashPassword })
     return
   } catch (error) {
-    if (error.source === 'SqlError') {
+    if (error.source === 'SqlError' || error.source === 'ControllerError') {
       throw error
     } else {
       throw new AppError(error, 'ControllerError', 'createUser', 3)
@@ -22,11 +26,11 @@ const loginUser = async (insertValues) => {
     let { email, password } = insertValues
     let userData = await models.userModels.selectUser(email)
     if (userData.length === 0) {
-      throw new AppError(new Error('Email is not correct.'), 'ControllerError', 'createUser', 1)
+      throw new AppError(new Error('找不到該使用者，請重新輸入'), 'ControllerError', 'createUser', 1)
     }
     let valid = await bcrypt.compare(password, userData[0].password)
     if (!valid) {
-      throw new AppError(new Error('Password is not correct.'), 'ControllerError', 'createUser', 1)
+      throw new AppError(new Error('密碼錯誤，請重新輸入'), 'ControllerError', 'createUser', 1)
     }
     return { user_id: userData[0].user_id, name: userData[0].name, email: userData[0].email }
   } catch (error) {
@@ -172,21 +176,21 @@ const getHistory = async (user_id) => {
 }
 
 const getAllCards = async (user_id) => {
-  try{
+  try {
     const results = await models.cardModels.getData(user_id)
     return results
-  }catch(error){
+  } catch (error) {
     throw error
   }
 }
 
 const createCards = async (insertValues) => {
-  try{
+  try {
     await models.cardModels.insertData(insertValues)
-    return 
-  }catch(error){
-    throw error    
+    return
+  } catch (error) {
+    throw error
   }
 }
 
-module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory, getAllCards, createCards}
+module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory, getAllCards, createCards }
