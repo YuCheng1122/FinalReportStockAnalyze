@@ -11,7 +11,7 @@ const registerVali = (insertValues) => {
 
 const loginVali = (insertValues) => {
   const schema = joi.object({
-    email: joi.string().email().required(),
+    email: joi.string().required(),
     password: joi.string().required(),
   })
   return schema.validate(insertValues)
@@ -65,7 +65,7 @@ const getHistoryVali = (insertValues) => {
 const insertCardVali = (insertValues) => {
   const schema = joi.object({
     image_link: joi.string().required(),
-    type: joi.string().required()
+    type: joi.string().required(),
   })
   return schema.validate(insertValues)
 }
