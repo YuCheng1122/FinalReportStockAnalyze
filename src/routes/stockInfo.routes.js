@@ -45,10 +45,11 @@ router.get('/:stock_id', async (req, res, next) => {
  * }[]
  *
  */
-router.get('/all/info', async (req, res, next) => {
+router.get('/info/:stock_id', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
-    const result = await stockController.getStockAllInfoController()
+    const stock_id = req.params.stock_id
+    const result = await stockController.getStockAllInfoController(stock_id)
     response_data.success = true
     response_data.data = result
     return res.status(200).send(response_data)

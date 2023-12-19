@@ -5,9 +5,9 @@ const { AppError } = require('../config/error_classes')
  * 函数“getStockAllInfoController”检索股票信息并处理发生的任何错误。
  * @returns stockInfo 变量，它是从 stockModels 模块调用 getStockAllInfo 函数的结果。
  */
-const getStockAllInfoController = async () => {
+const getStockAllInfoController = async (stock_id) => {
   try {
-    const stockInfo = await stockModels.getStockAllInfo()
+    const stockInfo = await stockModels.getStockAllInfo(stock_id)
     return stockInfo
   } catch (error) {
     if (error.source === 'SqlError') {
