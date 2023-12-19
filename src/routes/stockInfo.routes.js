@@ -45,7 +45,7 @@ router.get('/:stock_id', async (req, res, next) => {
  * }[]
  *
  */
-router.get('/info/:stock_id', async (req, res, next) => {
+router.get('/all/info/:stock_id', async (req, res, next) => {
   let response_data = { success: false, data: null, errorMessage: null }
   try {
     const stock_id = req.params.stock_id ? req.params.stock_id : '1101'
