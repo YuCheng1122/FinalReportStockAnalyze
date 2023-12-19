@@ -3,7 +3,7 @@ const db = require('../config/databaseConnect')
 const { AppError } = require('../config/error_classes')
 
 //Warren Buffett debtRatio < 30%
-const getFinancialData = () => {
+const getFinancialData = (industry) => {
   return new Promise((resolve, reject) => {
     const sql = `
     SELECT 
@@ -30,13 +30,13 @@ WHERE
     CAST(b.debtRatio AS DECIMAL(10, 2)) < 30 
     AND b.year = 2023
     AND b.quarter = 3
+    AND s.industry = ?
 ORDER BY 
     CAST(i.eps AS DECIMAL(10, 2)) DESC
 LIMIT 5;
 
       `
-
-    db.query(sql, (error, result) => {
+    db.query(sql, industry, (error, result) => {
       if (error) {
         reject(new AppError(error, 'Model', 'getFinancialData', 4))
       } else {
@@ -46,7 +46,7 @@ LIMIT 5;
   })
 }
 //Warren Buffett ROE > 15%
-const getHighROEFinancialData = () => {
+const getHighROEFinancialData = (industry) => {
   return new Promise((resolve, reject) => {
     const sql = `
     SELECT 
@@ -73,13 +73,13 @@ WHERE
     b.ROE > 1.5
     AND b.year = 2023
     AND b.quarter = 3
+    AND s.industry = ?
 ORDER BY 
     CAST(i.eps AS DECIMAL(10, 2)) DESC
 LIMIT 5;
-
       `
 
-    db.query(sql, (error, result) => {
+    db.query(sql,industry, (error, result) => {
       if (error) {
         reject(new AppError(error, 'Model', 'getHighROEFinancialData', 4))
       } else {
@@ -89,7 +89,7 @@ LIMIT 5;
   })
 }
 //Warren Buffett Free Cash Flow > 0
-const getPositiveCashFlowData = () => {
+const getPositiveCashFlowData = (industry) => {
   return new Promise((resolve, reject) => {
     const sql = `
     SELECT 
@@ -126,6 +126,7 @@ FROM (
     WHERE 
         b.year = 2023
         AND b.quarter = 3
+        AND s.industry = ?
 ) AS filtered_data
 ORDER BY 
     CAST(filtered_data.eps AS DECIMAL(10, 2)) DESC
@@ -133,7 +134,7 @@ LIMIT 5;
 
     `
 
-    db.query(sql, (error, result) => {
+    db.query(sql,industry, (error, result) => {
       if (error) {
         reject(new AppError(error, 'Model', 'getPositiveCashFlowData', 4))
       } else {
@@ -143,7 +144,7 @@ LIMIT 5;
   })
 }
 //Benjamin Graham currentRatio > 200%
-const getFinancialDataWithCurrentRatio = () => {
+const getFinancialDataWithCurrentRatio = (industry) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM (
@@ -173,6 +174,7 @@ const getFinancialDataWithCurrentRatio = () => {
     WHERE 
         b.year = 2023
         AND b.quarter = 3
+        AND s.industry = ?
 ) AS subquery
 ORDER BY 
     CAST(subquery.eps AS DECIMAL(10, 2)) DESC
@@ -180,7 +182,7 @@ LIMIT 5;
 
     `
 
-    db.query(sql, (error, results) => {
+    db.query(sql, industry, (error, results) => {
       if (error) {
         reject(new AppError(error, 'Model', 'getFinancialDataWithCurrentRatio', 4))
       } else {
@@ -193,7 +195,7 @@ LIMIT 5;
   })
 }
 //Benjamin Graham eps > 0
-const getFinancialData2023Q3 = () => {
+const getFinancialData2023Q3 = (industry) => {
   return new Promise((resolve, reject) => {
     const sql = `
     SELECT 
@@ -219,12 +221,13 @@ JOIN
 WHERE 
     b.year = 2023
     AND b.quarter = 3
+    AND s.industry = ?
 ORDER BY 
     CAST(i.eps AS DECIMAL(10, 2)) DESC
 LIMIT 5;
       `
 
-    db.query(sql, (error, results) => {
+    db.query(sql,industry, (error, results) => {
       if (error) {
         reject(new AppError(error, 'Model', 'getFinancialData2023Q3', 4))
       } else {

@@ -15,6 +15,13 @@ const getTaiexDataByDateController = async (date) => {
 }
 
 const getAllTaiexDataController = async () => {
+  /**
+   * Retrieves all the Taiex data from the taiexDataModel.
+   *
+   * @returns {Promise<any>} The result of retrieving all the Taiex data.
+   * @throws {SqlError} If an error occurs during retrieval.
+   * @throws {AppError} If an error occurs that is not a SqlError.
+   */
   try {
     const result = await taiexDataModel.getAllTaiexData()
     return result
@@ -28,3 +35,4 @@ const getAllTaiexDataController = async () => {
 }
 
 module.exports = { getTaiexDataByDateController, getAllTaiexDataController }
+

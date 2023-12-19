@@ -36,11 +36,7 @@ const getPePbController = async (stock_id) => {
   }
 }
 
-/**
- * 函数“getStockDescription”根据股票的 ID 检索股票的描述，处理可能发生的任何错误。
- * @param stock_id - `stock_id` 参数是股票的标识符。它用于从数据库中检索股票的描述。
- * @returns 函数“getStockDescription”返回“stockModels.getStockDescription(stock_id)”函数调用的结果。
- */
+
 const getStockDescription = async (stock_id) => {
   try {
     const result = await stockModels.getStockDescription(stock_id)
@@ -228,45 +224,45 @@ const getSentimentAnalysis = async (stock_id) => {
   }
 }
 
-const stockPickingDebtRatio = async () => {
+const stockPickingDebtRatio = async (industry) => {
   try {
-    const result = await investmentTechModels.getFinancialData()
+    const result = await investmentTechModels.getFinancialData(industry)
     return result
   } catch (error) {
     throw error
   }
 }
 
-const stockPickingRoe = async () => {
+const stockPickingRoe = async (industry) => {
   try {
-    const result = await investmentTechModels.getHighROEFinancialData()
+    const result = await investmentTechModels.getHighROEFinancialData(industry)
     return result
   } catch (error) {
     throw error
   }
 }
 
-const stockPickingFreeCashFlow = async () => {
+const stockPickingFreeCashFlow = async (industry) => {
   try {
-    const result = await investmentTechModels.getPositiveCashFlowData()
+    const result = await investmentTechModels.getPositiveCashFlowData(industry)
     return result
   } catch (error) {
     throw error
   }
 }
 
-const stockPickingCurrentRatio = async () => {
+const stockPickingCurrentRatio = async (industry) => {
   try {
-    const result = await investmentTechModels.getFinancialDataWithCurrentRatio()
+    const result = await investmentTechModels.getFinancialDataWithCurrentRatio(industry)
     return result
   } catch (error) {
     throw error
   }
 }
 
-const stockPickingEps = async () => {
+const stockPickingEps = async (industry) => {
   try {
-    const result = await investmentTechModels.getFinancialData2023Q3()
+    const result = await investmentTechModels.getFinancialData2023Q3(industry)
     return result
   } catch (error) {
     throw error

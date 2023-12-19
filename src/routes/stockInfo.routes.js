@@ -459,10 +459,11 @@ router.get('/sentiment_analysis/:stock_id', async (req, res, next) => {
  * "link": string
  * }
  */
-router.get('/picking/debtRatio', async (req, res, next) => {
+router.get('/picking/debtRatio/:industry', async (req, res, next) => {
+  const industry = req.params.industry
   const response_data = { success: false, data: null, errorMessage: null }
   try {
-    const result = await stockController.stockPickingDebtRatio()
+    const result = await stockController.stockPickingDebtRatio(industry)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
@@ -485,10 +486,11 @@ router.get('/picking/debtRatio', async (req, res, next) => {
  * "link": string
  * }
  */
-router.get('/picking/Roe', async (req, res, next) => {
+router.get('/picking/Roe/:industry', async (req, res, next) => {
+  const industry = req.params.industry
   const response_data = { success: false, data: null, errorMessage: null }
   try {
-    const result = await stockController.stockPickingRoe()
+    const result = await stockController.stockPickingRoe(industry)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
@@ -511,10 +513,11 @@ router.get('/picking/Roe', async (req, res, next) => {
  * "link": string
  * }
  */
-router.get('/picking/freeCashFlow', async (req, res, next) => {
+router.get('/picking/freeCashFlow/:industry', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
   try {
-    const result = await stockController.stockPickingFreeCashFlow()
+    const industry = req.params.industry
+    const result = await stockController.stockPickingFreeCashFlow(industry)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
@@ -537,10 +540,11 @@ router.get('/picking/freeCashFlow', async (req, res, next) => {
  * "link": string
  * }
  */
-router.get('/picking/currentRatio', async (req, res, next) => {
+router.get('/picking/currentRatio/:industry', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
   try {
-    const result = await stockController.stockPickingCurrentRatio()
+    const industry = req.params.industry
+    const result = await stockController.stockPickingCurrentRatio(industry)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
@@ -563,10 +567,11 @@ router.get('/picking/currentRatio', async (req, res, next) => {
  * "link": string
  * }
  */
-router.get('/picking/Eps', async (req, res, next) => {
+router.get('/picking/Eps/:industry', async (req, res, next) => {
   const response_data = { success: false, data: null, errorMessage: null }
   try {
-    const result = await stockController.stockPickingEps()
+    const industry = req.params.industry
+    const result = await stockController.stockPickingEps(industry)
     response_data.data = result
     response_data.success = true
     return res.status(200).send(response_data)
