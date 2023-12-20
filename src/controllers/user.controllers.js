@@ -193,4 +193,30 @@ const createCards = async (insertValues) => {
   }
 }
 
-module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory, getAllCards, createCards }
+const createLight = async(insertValues) => {
+  try{
+    await models.lightModels.insertLight(insertValues)
+    return 
+  }catch(error){
+    if (error.source === 'ModelError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'createLight', 3)
+    }
+  }
+}
+
+const getAllLight = async() => {
+  try{
+    const result = await models.lightModels.getAllLight()
+    return result
+  }catch(error){
+    if (error.source === 'ModelError') {
+      throw error
+    } else {
+      throw new AppError(error, 'ControllerError', 'getAllLight', 3)
+    }
+  }
+}
+
+module.exports = { createUser, loginUser, updatePassword, createGroup, getGroup, deleteGroup, updateGroup, getAllIndustryStock, setDefaultCombo, getHistory, getAllCards, createCards, createLight, getAllLight }

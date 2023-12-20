@@ -21,5 +21,6 @@ module.exports = {
   miIndexModels: require('./mi_index.model'),
   taiexModels: require('./taiex.model'),
   investmentTechModels: require('./investmentTech'),
-  cardModels: require('./card.model')
+  cardModels: require('./card.model'),
+  lightModels: require('./light.model')
 }

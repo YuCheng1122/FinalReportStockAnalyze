@@ -321,4 +321,59 @@ router.post('/insert/card', passport.authenticate('jwt', { session: false }), as
   }
 })
 
+/**
+ * 創建祈褔燈
+ * 
+ * POST /api/user/create/card
+ * 
+ * @param {object} - {
+ *  stock_id: number,
+ *  name: string,
+ *  message: string
+ * }
+ * 
+ */
+router.post('/create/light', passport.authenticate('jwt', { session: false }), async(req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try {
+    const valid = userValidation.insertLightVali(req.body)
+    if (valid.error) {
+      throw new AppError(new Error(valid.error.details[0].message), 'RouteError', '/create/light', 2)
+    }
+    const insertValues = req.body
+    insertValues.user_id = req.user.user_id
+    await controll.userControll.createLight(insertValues)
+    response_data.success = true
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * 獲取所有祈福燈
+ * 
+ * GET /api/user/all/light
+ * 
+ * @return {Array} - {
+ *  user_id: number,
+ *  name: string,
+ *  message: string,
+ *  stock_id: number,
+ *  company_name: string,
+ *  create_date: timestamp
+ * }
+ */
+router.get('/all/light', async (req, res, next) => {
+  const response_data = { success: false, data: null, errorMessage: null }
+  try { 
+    const results = await controll.userControll.getAllLight()
+    response_data.success = true
+    response_data.data = results
+    return res.status(200).send(response_data)
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = router

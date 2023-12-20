@@ -70,4 +70,14 @@ const insertCardVali = (insertValues) => {
   return schema.validate(insertValues)
 }
 
-module.exports = { registerVali, loginVali, updatePasswordVali, createGroupVali, deleteGroupVali, updateGroupVali, setDefaultComboVali, getHistoryVali, insertCardVali }
+const insertLightVali = (insertValues) => {
+  const schema = joi.object({
+    stock_id: joi.number().integer().required(),
+    name: joi.string().required(),
+    message: joi.string().required(),
+  })
+  return schema.validate(insertValues)
+}
+
+
+module.exports = { registerVali, loginVali, updatePasswordVali, createGroupVali, deleteGroupVali, updateGroupVali, setDefaultComboVali, getHistoryVali, insertCardVali, insertLightVali }
