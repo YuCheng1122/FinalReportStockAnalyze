@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const tables = ['assetStatements', 'incomeStatements', 'balanceSheetLiabilitiesEquity', 'cashFlowStatement']
+    const tables = ['assetstatements', 'incomestatements', 'balancesheetliabilitiesequity', 'cashflowstatement']
     for (const table of tables) {
       await queryInterface.addColumn(table, 'year', {
         type: Sequelize.INTEGER,
@@ -17,7 +17,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    const tables = ['assetStatements', 'incomeStatements', 'balanceSheetLiabilitiesEquity', 'cashFlowStatement']
+    const tables = ['assetstatements', 'incomestatements', 'balancesheetliabilitiesequity', 'cashflowstatement']
     for (const table of tables) {
       await queryInterface.removeColumn(table, 'year')
       await queryInterface.removeColumn(table, 'quarter')

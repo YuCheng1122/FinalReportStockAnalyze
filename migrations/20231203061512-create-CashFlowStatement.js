@@ -3,8 +3,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('cashFlowStatement', {
-      cashFlowStatement_id: {
+    await queryInterface.createTable('cashflowstatement', {
+      cashflowstatement_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -27,23 +27,23 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingCashFlow: {
+      operatingcashflow: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      investingCashFlow: {
+      investingcashflow: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      financingCashFlow: {
+      financingcashflow: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      freeCashFlow: {
+      freecashflow: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      netCashFlow: {
+      netcashflow: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -51,39 +51,39 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingCashFlowPerShare: {
+      operatingcashflowpershare: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      investingCashFlowPerShare: {
+      investingcashflowpershare: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      financingCashFlowPerShare: {
+      financingcashflowpershare: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      freeCashFlowPerShare: {
+      freecashflowpershare: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      netCashFlowPerShare: {
+      netcashflowpershare: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      interestCoverageRatio: {
+      interestcoverageratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingCashFlowToCurrentLiabilitiesRatio: {
+      operatingcashflowtocurrentliabilitiesratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingCashFlowToLiabilitiesRatio: {
+      operatingcashflowtoliabilitiesratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingCashFlowToNetIncomeRatio: {
+      operatingcashflowtonetincomeratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -93,12 +93,12 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('cashFlowStatement')
+    await queryInterface.dropTable('cashflowstatement')
   }
 };

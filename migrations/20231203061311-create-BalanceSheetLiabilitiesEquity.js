@@ -3,8 +3,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('balanceSheetLiabilitiesEquity', {
-      balanceSheetLiabilitiesEquity_id: {
+    await queryInterface.createTable('balancesheetliabilitiesequity', {
+      balancesheetliabilitiesequity_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -23,31 +23,31 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      currentLiabilities: {
+      currentliabilities: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      longTermLiabilities: {
+      longtermliabilities: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      accountsAndNotesPayable: {
+      accountsandnotespayable: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      advanceReceipts: {
+      advancereceipts: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      shortTermBorrowings: {
+      shorttermborrowings: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      shortTermNotesAndBillsPayable: {
+      shorttermnotesandbillspayable: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      longTermLiabilitiesCurrentPortion: {
+      longtermliabilitiescurrentportion: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -55,11 +55,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      commonStocks: {
+      commonstocks: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      retainedEarnings: {
+      retainedearnings: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -71,19 +71,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      roeT4Q: {
+      roet4q: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      reinvestmentRate: {
+      reinvestmentrate: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      debtRatio: {
+      debtratio: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      accountsAndNotesPayableTurnoverDays: {
+      accountsandnotespayableturnoverdays: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -93,12 +93,12 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
   
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('balanceSheetLiabilitiesEquity')
+    await queryInterface.dropTable('balancesheetliabilitiesequity')
   },
 }

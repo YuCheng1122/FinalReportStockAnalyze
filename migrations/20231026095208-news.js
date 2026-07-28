@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('GoogleNewsArticles', {
+    await queryInterface.createTable('googlenewsarticles', {
       news_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      imageSrc: {
+      imagesrc: {
         type: Sequelize.TEXT,
         allowNull: true,
       },
@@ -31,12 +31,12 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('GoogleNewsArticles')
+    await queryInterface.dropTable('googlenewsarticles')
   },
 }

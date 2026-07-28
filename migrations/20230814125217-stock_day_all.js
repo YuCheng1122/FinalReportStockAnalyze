@@ -12,7 +12,7 @@ module.exports = {
       stock_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Stock', // 確保這裡的模型名稱與你的資料庫結構相符
+          model: 'stock', // 確保這裡的模型名稱與你的資料庫結構相符
           key: 'stock_id',
         },
         allowNull: true,

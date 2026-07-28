@@ -30,6 +30,8 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pca-js": "^1.0.2",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
     "puppeteer": "^21.3.8",
     "sequelize": "^6.32.1",
     "serpapi": "^2.0.0",

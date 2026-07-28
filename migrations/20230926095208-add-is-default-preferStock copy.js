@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('preferStock', 'is_default', {
+    await queryInterface.addColumn('preferstock', 'is_default', {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false,
@@ -11,6 +11,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('preferStock', 'is_default')
+    await queryInterface.removeColumn('preferstock', 'is_default')
   },
 }

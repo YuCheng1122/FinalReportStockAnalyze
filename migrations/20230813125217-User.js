@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('User', {
+    await queryInterface.createTable('user', {
       user_id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -31,16 +31,16 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       is_verified: {
-        type: Sequelize.TINYINT,
+        type: Sequelize.SMALLINT,
         defaultValue: 0
       }
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('User');
+    await queryInterface.dropTable('user');
   }
 };

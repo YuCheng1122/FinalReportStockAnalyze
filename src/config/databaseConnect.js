@@ -1,22 +1,104 @@
-const mysql = require('mysql2')
+const { Pool } = require('pg')
 const path = require('path')
 require('dotenv').config({
   path: path.resolve(__dirname, '../../.env'),
 })
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = process.env
-const db = mysql.createPool({
-  host: DB_HOST,
-  user: DB_USERNAME,
-  database: DB_NAME,
-  password: DB_PASSWORD,
-  port: DB_PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
-})
 
-module.exports = db
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.PGSSLMODE === 'disable' ? false : { rejectUnauthorized: false },
+      }
+    : {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 5432,
+        user: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        ssl: process.env.PGSSLMODE === 'disable' ? false : { rejectUnauthorized: false },
+      }
+)
+
+// Converts `backtick` identifiers (MySQL) to "double quoted" identifiers (Postgres).
+const toPgIdentifiers = (sql) => sql.replace(/`([^`]+)`/g, '"$1"')
+
+// mysql2 lets you write `INSERT IGNORE INTO ...` to silently skip rows that violate a
+// unique constraint. Postgres has no such keyword; the closest equivalent is
+// `ON CONFLICT DO NOTHING`, appended after the VALUES clause is built.
+const isInsertIgnore = (sql) => /^\s*INSERT\s+IGNORE\s+INTO/i.test(sql)
+const stripInsertIgnore = (sql) => sql.replace(/^(\s*)INSERT\s+IGNORE\s+INTO/i, '$1INSERT INTO')
+
+// mysql2 special-cases a single `?` (or `(?)`) right after VALUES: pass an array of rows
+// (bulk insert) or a flat array of one row's values, and it expands the placeholder into
+// the literal tuples. Postgres has no such shorthand, so we expand it ourselves into a
+// real multi-row VALUES list with numbered placeholders.
+const BULK_VALUES_RE = /VALUES\s*\(?\s*\?\s*\)?\s*;?\s*$/i
+
+const expandBulkValues = (sql, params) => {
+  let rows = params[0]
+  if (!Array.isArray(rows)) return null
+  if (rows.length === 0) return { empty: true }
+  if (!Array.isArray(rows[0])) rows = [rows] // single flat row -> one-row bulk insert
+
+  const flatParams = []
+  const valueGroups = rows.map((row) => {
+    const placeholders = row.map((value) => {
+      flatParams.push(value)
+      return `$${flatParams.length}`
+    })
+    return `(${placeholders.join(', ')})`
+  })
+
+  const newSql = sql.replace(BULK_VALUES_RE, `VALUES ${valueGroups.join(', ')}`)
+  return { sql: newSql, params: flatParams }
+}
+
+// Converts positional `?` placeholders (MySQL) to numbered `$1, $2, ...` (Postgres).
+const toPositionalParams = (sql) => {
+  let i = 0
+  return sql.replace(/\?/g, () => `$${++i}`)
+}
+
+const normalizeParams = (paramsOrCallback) => {
+  if (paramsOrCallback === undefined) return []
+  return Array.isArray(paramsOrCallback) ? paramsOrCallback : [paramsOrCallback]
+}
+
+// Drop-in replacement for mysql2 pool.query(sql, params, callback) / pool.query(sql, callback).
+// Returns rows directly as `result` in the callback, matching mysql2's behavior for SELECTs
+// (which is how nearly every model in this codebase already treats the result).
+const query = (sql, paramsOrCallback, maybeCallback) => {
+  let params
+  let callback
+  if (typeof paramsOrCallback === 'function') {
+    params = []
+    callback = paramsOrCallback
+  } else {
+    params = normalizeParams(paramsOrCallback)
+    callback = maybeCallback
+  }
+
+  let pgSql = toPgIdentifiers(sql)
+  const wasInsertIgnore = isInsertIgnore(pgSql)
+  if (wasInsertIgnore) pgSql = stripInsertIgnore(pgSql)
+
+  let pgParams = params
+  if (BULK_VALUES_RE.test(pgSql.trim())) {
+    const expanded = expandBulkValues(pgSql, params)
+    if (expanded.empty) return callback(null, [])
+    pgSql = expanded.sql
+    pgParams = expanded.params
+  } else {
+    pgSql = toPositionalParams(pgSql)
+  }
+
+  if (wasInsertIgnore) pgSql = `${pgSql.replace(/;?\s*$/, '')} ON CONFLICT DO NOTHING`
+
+  pool.query(pgSql, pgParams, (error, result) => {
+    if (error) return callback(error)
+    callback(null, result.rows)
+  })
+}
+
+module.exports = { query, pool }

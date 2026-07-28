@@ -3,8 +3,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('incomeStatements', {
-      incomeStatements_id: {
+    await queryInterface.createTable('incomestatements', {
+      incomestatements_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -23,39 +23,39 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      grossProfit: {
+      grossprofit: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingExpenses: {
+      operatingexpenses: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      sellingExpenses: {
+      sellingexpenses: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      administrativeExpenses: {
+      administrativeexpenses: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      researchAndDevelopmentExpenses: {
+      researchanddevelopmentexpenses: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingIncome: {
+      operatingincome: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      profitBeforeTax: {
+      profitbeforetax: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      netIncome: {
+      netincome: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      netIncomeAttributableToOwnersOfTheParent: {
+      netincomeattributabletoownersoftheparent: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -63,67 +63,67 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      epsQOQ: {
+      epsqoq: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      epsYOY: {
+      epsyoy: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      epsT4Q: {
+      epst4q: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      epsT4QAvg: {
+      epst4qavg: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      epsT4QQOQ: {
+      epst4qqoq: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      epsT4QYOY: {
+      epst4qyoy: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      grossMargin: {
+      grossmargin: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingMargin: {
+      operatingmargin: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      profitBeforeTaxMargin: {
+      profitbeforetaxmargin: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      netIncomeMargin: {
+      netincomemargin: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      incomeTaxToProfitBeforeTaxRatio: {
+      incometaxtoprofitbeforetaxratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      operatingExpenseRatio: {
+      operatingexpenseratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      researchAndDevelopmentExpensesToSalesRatio: {
+      researchanddevelopmentexpensestosalesratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      nonOperatingIncomeToProfitBeforeTax: {
+      nonoperatingincometoprofitbeforetax: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      sellingExpensesToSalesRatio: {
+      sellingexpensestosalesratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      administrativeExpensesToSalesRatio: {
+      administrativeexpensestosalesratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -133,12 +133,12 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('incomeStatements')
+    await queryInterface.dropTable('incomestatements')
   },
 }

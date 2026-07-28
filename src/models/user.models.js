@@ -3,14 +3,15 @@ const { AppError } = require('../config/error_classes')
 
 const insertUser = (insertValues) => {
   return new Promise((resolve, reject) => {
-    let sql = 'INSERT INTO user SET ?'
-    db.query(sql, insertValues, (error, result) => {
+    const { name, email, password } = insertValues
+    let sql = 'INSERT INTO "user"(name, email, password) VALUES (?, ?, ?) RETURNING user_id'
+    db.query(sql, [name, email, password], (error, result) => {
       if (error) {
         console.log(error)
         reject(new AppError(error, 'SqlError', 'insertUser', 4))
       } else {
         console.log(result)
-        resolve(result.insertId)
+        resolve(result[0].user_id)
       }
     })
   })
@@ -18,7 +19,7 @@ const insertUser = (insertValues) => {
 
 const selectUser = (email) => {
   return new Promise((resolve, reject) => {
-    let sql = 'SELECT user_id,name, password, email FROM user WHERE email = ?'
+    let sql = 'SELECT user_id,name, password, email FROM "user" WHERE email = ?'
     db.query(sql, email, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectUser', 4))
@@ -31,7 +32,7 @@ const selectUser = (email) => {
 
 const deleteUser = (user_id) => {
   return new Promise((resolve, reject) => {
-    let sql = 'DELETE FROM user WHERE user_id = ?'
+    let sql = 'DELETE FROM "user" WHERE user_id = ?'
     db.query(sql, user_id, (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectUser', 4))
@@ -44,7 +45,7 @@ const deleteUser = (user_id) => {
 
 const selectUserwithJWT = (user_id, email) => {
   return new Promise((resolve, reject) => {
-    let sql = 'SELECT * FROM user WHERE user_id = ? AND email = ?'
+    let sql = 'SELECT * FROM "user" WHERE user_id = ? AND email = ?'
     db.query(sql, [user_id, email], (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'selectUserwithJWT', 4))
@@ -59,11 +60,11 @@ const selectUserwithJWT = (user_id, email) => {
 
 const updatePassword = (user_id, hashPassword) => {
   return new Promise((resolve, reject) => {
-    let sql = 'UPDATE user SET PASSWORD = ? WHERE user_id = ?'
+    let sql = 'UPDATE "user" SET password = ? WHERE user_id = ? RETURNING user_id'
     db.query(sql, [hashPassword, user_id], (error, result) => {
       if (error) {
         reject(new AppError(error, 'SqlError', 'updatePassword', 4))
-      } else if (result.affectedRows === 0) {
+      } else if (result.length === 0) {
         reject(new AppError(new Error('Not search data'), 'SqlError', 'updatePassword', 4))
       } else {
         resolve(result[0])

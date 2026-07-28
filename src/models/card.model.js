@@ -3,8 +3,9 @@ const { AppError } = require('../config/error_classes')
 
 const insertData = async (insertData) => {
   return new Promise((resolve,reject) => {
-    const sql = 'INSERT INTO card SET ?'
-    db.query(sql, insertData, (error, result) => {
+    const { image_link, type, user_id } = insertData
+    const sql = 'INSERT INTO card(image_link, type, user_id) VALUES (?, ?, ?)'
+    db.query(sql, [image_link, type, user_id], (error, result) => {
       if (error) {
         reject(new AppError(error, 'Model', 'insertData', 4))
       } else {

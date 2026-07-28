@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: stocklight-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "true"
+      - key: DATABASE_URL
+        sync: false
+      - key: PGSSLMODE
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: SERP_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false

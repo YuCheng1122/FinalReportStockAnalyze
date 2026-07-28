@@ -3,11 +3,12 @@ const { AppError } = require('../config/error_classes')
 
 const insertComment = async (insertValues) => {
   return new Promise((resole, reject) => {
-    let sql = 'INSERT INTO comment SET ?'
-    db.query(sql, [insertValues], (error, result) => {
+    const { name, email, subject, content } = insertValues
+    let sql = 'INSERT INTO comment(name, email, subject, content) VALUES (?, ?, ?, ?) RETURNING comment_id'
+    db.query(sql, [name, email, subject, content], (error, result) => {
       if (error) {
         reject(new AppError(error, 'Model', 'insertComment', 4))
-      } else if (result.affectedRows === 0) {
+      } else if (result.length === 0) {
         reject(new AppError(new Error('InsertComment function not insert successfully.'), 'Model', 'insertComment', 3))
       } else {
         resole()

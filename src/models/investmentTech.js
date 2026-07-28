@@ -19,7 +19,7 @@ FROM
 JOIN 
     stock s ON b.stock_id = s.stock_id
 JOIN 
-    (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE YEAR(date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
+    (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE EXTRACT(YEAR FROM date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
 JOIN 
     (SELECT stock_id, closing_price, date FROM stock_day_all) sd_latest ON sd_max_date.stock_id = sd_latest.stock_id AND sd_max_date.latest_date = sd_latest.date
 JOIN 
@@ -62,7 +62,7 @@ FROM
 JOIN 
     stock s ON b.stock_id = s.stock_id
 JOIN 
-    (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE YEAR(date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
+    (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE EXTRACT(YEAR FROM date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
 JOIN 
     (SELECT stock_id, closing_price, date FROM stock_day_all) sd_latest ON sd_max_date.stock_id = sd_latest.stock_id AND sd_max_date.latest_date = sd_latest.date
 JOIN 
@@ -70,7 +70,7 @@ JOIN
 JOIN 
     (SELECT stock_id, link FROM financial_statement WHERE year = 2023 AND season = 3) fs ON b.stock_id = fs.stock_id
 WHERE 
-    b.ROE > 1.5
+    CAST(b.ROE AS DECIMAL(10, 2)) > 1.5
     AND b.year = 2023
     AND b.quarter = 3
     AND s.industry = ?
@@ -114,7 +114,7 @@ FROM (
     JOIN 
         stock s ON b.stock_id = s.stock_id
     JOIN 
-        (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE YEAR(date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
+        (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE EXTRACT(YEAR FROM date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
     JOIN 
         (SELECT stock_id, closing_price, date FROM stock_day_all) sd_latest ON sd_max_date.stock_id = sd_latest.stock_id AND sd_max_date.latest_date = sd_latest.date
     JOIN 
@@ -162,7 +162,7 @@ const getFinancialDataWithCurrentRatio = (industry) => {
     JOIN 
         stock s ON b.stock_id = s.stock_id
     JOIN 
-        (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE YEAR(date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
+        (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE EXTRACT(YEAR FROM date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
     JOIN 
         (SELECT stock_id, closing_price, date FROM stock_day_all) sd_latest ON sd_max_date.stock_id = sd_latest.stock_id AND sd_max_date.latest_date = sd_latest.date
     JOIN 
@@ -170,7 +170,7 @@ const getFinancialDataWithCurrentRatio = (industry) => {
     JOIN 
         (SELECT stock_id, link FROM financial_statement WHERE year = 2023 AND season = 3) fs ON b.stock_id = fs.stock_id
     JOIN 
-        (SELECT stock_id, currentRatio FROM assetstatements WHERE currentRatio > 200 AND YEAR=2023 AND QUARTER=3) ast ON b.stock_id = ast.stock_id
+        (SELECT stock_id, currentRatio FROM assetstatements WHERE CAST(currentRatio AS DECIMAL(10, 2)) > 200 AND YEAR=2023 AND QUARTER=3) ast ON b.stock_id = ast.stock_id
     WHERE 
         b.year = 2023
         AND b.quarter = 3
@@ -211,11 +211,11 @@ FROM
 JOIN 
     stock s ON b.stock_id = s.stock_id
 JOIN 
-    (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE YEAR(date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
+    (SELECT stock_id, MAX(date) AS latest_date FROM stock_day_all WHERE EXTRACT(YEAR FROM date) = 2023 GROUP BY stock_id) sd_max_date ON b.stock_id = sd_max_date.stock_id
 JOIN 
     (SELECT stock_id, closing_price, date FROM stock_day_all) sd_latest ON sd_max_date.stock_id = sd_latest.stock_id AND sd_max_date.latest_date = sd_latest.date
 JOIN 
-    (SELECT stock_id, eps, epsYoY FROM incomestatements WHERE year = 2023 AND quarter = 3 AND eps > 0) i ON b.stock_id = i.stock_id
+    (SELECT stock_id, eps, epsYoY FROM incomestatements WHERE year = 2023 AND quarter = 3 AND CAST(eps AS DECIMAL(10, 2)) > 0) i ON b.stock_id = i.stock_id
 JOIN 
     (SELECT stock_id, link FROM financial_statement WHERE year = 2023 AND season = 3) fs ON b.stock_id = fs.stock_id
 WHERE 

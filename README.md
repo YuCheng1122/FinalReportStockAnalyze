@@ -4,7 +4,8 @@
 ## 前提條件
 確保您已安裝以下軟件：
 - Node.js
-- MySQL
+- PostgreSQL（本專案原本使用 MySQL，已於 2026 年搬遷至 Postgres，方便部署在免費的
+  Postgres 服務上，例如 Supabase／Neon。詳見專案根目錄上一層的 `DEPLOYMENT.md`。）
 ## 安裝
 1. 克隆此存儲庫：
 ```
@@ -18,7 +19,9 @@ cd FinalReportStockAnalyze
 ```
 npm install
 ```
-4. 複製 .env.example 文件並重命名為 .env，然後根據您的環境配置填寫適當的值。
+4. 複製 .env.example 文件並重命名為 .env，然後根據您的環境配置填寫適當的值
+   （優先使用 `DATABASE_URL`，或用 `DB_HOST`/`DB_USERNAME`/`DB_PASSWORD`/`DB_NAME`
+   這組離散變數）。
 5. 啟動伺服器：
 ```
 node app.js
@@ -28,11 +31,10 @@ node app.js
 ```
 npm install dotenv
 ```
-2. 創建資料庫：
+2. 建立一個空的 Postgres 資料庫
 3. 檢查資料庫連線
 ```
-cd /database
-node testConnection.js
+node src/database/testConnection.js
 ```
 4. 執行遷移以創建表格：
 ```

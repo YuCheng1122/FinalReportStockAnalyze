@@ -22,11 +22,11 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
-      errorSource: {
+      errorsource: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      errorLoaction: {
+      errorloaction: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -36,7 +36,7 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },

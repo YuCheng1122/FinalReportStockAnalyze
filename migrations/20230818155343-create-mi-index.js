@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("MI_INDEX", {
+    await queryInterface.createTable("mi_index", {
       m_i_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -36,17 +36,17 @@ module.exports = {
       create_date: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       update_date: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("MI_INDEX");
+    await queryInterface.dropTable("mi_index");
   },
 };

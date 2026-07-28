@@ -19,35 +19,35 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      announcedDate: {
+      announceddate: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      cashDividend: {
+      cashdividend: {
         type: Sequelize.FLOAT(4),
         allowNull: true
       },
-      stockDividend: {
+      stockdividend: {
         type: Sequelize.FLOAT(4),
         allowNull: true
       },
-      XDTradingDate: {
+      xdtradingdate: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      XRTradingDate: {
+      xrtradingdate: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      cashDividendPaidDate: {
+      cashdividendpaiddate: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      XDPriceRecoveryDays: {
+      xdpricerecoverydays: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      payoutType: {
+      payouttype: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -57,7 +57,7 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },

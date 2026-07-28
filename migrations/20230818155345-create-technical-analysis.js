@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: false,
       },
-      weaklyAvg: {
+      weaklyavg: {
         type: Sequelize.FLOAT(10, 4),
         allowNull: true,
       },

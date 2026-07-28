@@ -4,12 +4,13 @@ require('dotenv').config({
 })
 
 const { Sequelize } = require('sequelize')
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
+const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = process.env
 console.log(DB_NAME, DB_USERNAME, DB_PASSWORD)
 
 const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
-  host: 'localhost',
-  dialect: 'mysql',
+  host: DB_HOST || 'localhost',
+  port: DB_PORT || 5432,
+  dialect: 'postgres',
 })
 
 sequelize

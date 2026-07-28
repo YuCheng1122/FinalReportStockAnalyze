@@ -3,8 +3,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('assetStatements', {
-      assetStatements_id: {
+    await queryInterface.createTable('assetstatements', {
+      assetstatements_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -23,27 +23,27 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      currentAssets: {
+      currentassets: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      longTermInvestment: {
+      longterminvestment: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      shortTermInvestment: {
+      shortterminvestment: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      fixedAssets: {
+      fixedassets: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      cashAndCashEquivalents: {
+      cashandcashequivalents: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      accountsAndNotesReceivable: {
+      accountsandnotesreceivable: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -55,35 +55,35 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      roaT4Q: {
+      roat4q: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      currentRatio: {
+      currentratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      quickRatio: {
+      quickratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      longTermLiabilitiesRatio: {
+      longtermliabilitiesratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      accountsAndNotesReceivableTurnoverRatio: {
+      accountsandnotesreceivableturnoverratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      inventoryTurnoverRatio: {
+      inventoryturnoverratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      fixedAssetsTurnoverRatio: {
+      fixedassetsturnoverratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      assetsTurnoverRatio: {
+      assetsturnoverratio: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -93,12 +93,12 @@ module.exports = {
       },
       update_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
   
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('assetStatements')
+    await queryInterface.dropTable('assetstatements')
   }
 };

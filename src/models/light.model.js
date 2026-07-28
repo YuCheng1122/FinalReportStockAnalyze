@@ -3,8 +3,9 @@ const { AppError } = require('../config/error_classes')
 
 const insertLight = (insertValues) => {
   return new Promise((resolve, reject) => {
-    const sql = 'INSERT INTO light SET ?'
-    db.query(sql, insertValues, (error, result) => {
+    const { stock_id, name, message, user_id } = insertValues
+    const sql = 'INSERT INTO light(stock_id, name, message, user_id) VALUES (?, ?, ?, ?)'
+    db.query(sql, [stock_id, name, message, user_id], (error, result) => {
       if (error) {
         reject(new AppError(error, 'ModelError', 'insertLight', 4))
       } else {
