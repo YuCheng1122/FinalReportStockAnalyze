@@ -1,0 +1,27 @@
+name: Market close data update
+
+# Original schedule (node-schedule, assumed Asia/Taipei local time): 18:00 Mon-Fri.
+# GitHub Actions cron is always UTC, so 18:00 Asia/Taipei (UTC+8) -> 10:00 UTC.
+on:
+  schedule:
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PGSSLMODE: ${{ secrets.PGSSLMODE }}
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install --omit=dev --ignore-scripts
+      - run: node src/scripts/updateBwibbu.js
+      - run: node src/scripts/updateStockDayAll.js
+      - run: node src/scripts/updateMiIndex.js
+      - run: node src/scripts/updateTaiexData.js

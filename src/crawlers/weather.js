@@ -1,15 +1,5 @@
 const puppeteer = require('puppeteer')
-const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-const mysql = require('mysql2/promise')
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_DIALECT } = process.env
-const connectionConfig = {
-  host: DB_HOST,
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
+const connection = require('../config/databaseConnect')
 
 function generateDateArray(startDate, endDate) {
   const dateArray = []
@@ -37,9 +27,7 @@ async function scrapeWebsiteData(date) {
   const baseUrl = `https://e-service.cwb.gov.tw/HistoryDataQuery/MonthDataController.do?command=viewMain&station=466920&stname=%25E8%2587%25BA%25E5%258C%2597&datepicker=${date}&altitude=5.3m`
 
   try {
-    const browser = await puppeteer.launch({
-      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-    })
+    const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.goto(baseUrl)
     const tr_array = await page.$$eval(
@@ -84,21 +72,28 @@ async function insertData() {
   return res
 }
 
+const queryAsync = (sql, params) => {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, params, (error, result) => {
+      if (error) reject(error)
+      else resolve(result)
+    })
+  })
+}
+
 const insertWeatherData = async () => {
   try {
-    const connection = await mysql.createConnection(connectionConfig)
     let weather_data_array = await insertData()
     let sql = 'INSERT INTO weather(date,status,temperature,humidity,precipitation) VALUES (?,?,?,?,?)'
     for (let i of weather_data_array) {
-      await connection.query(sql, [i.date, i.status, i.temperature, i.humidity, i.precipitation], (error, result) => {
-        if (error) {
-          console.log(error)
-        } else {
-          console.log('successfully !')
-        }
-      })
+      try {
+        await queryAsync(sql, [i.date, i.status, i.temperature, i.humidity, i.precipitation])
+        console.log('successfully !')
+      } catch (error) {
+        console.log(error)
+      }
     }
-    connection.close()
+    connection.pool.end()
   } catch (error) {
     console.log(error)
   }

@@ -6,7 +6,6 @@ const routes = require('./src/routes')
 const { AppError } = require('./src/config/error_classes')
 const { handleError, handleInfo } = require('./src/config/log_creator')
 
-require('./src/schedule')
 require('dotenv').config()
 
 const app = express()

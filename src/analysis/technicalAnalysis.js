@@ -1,25 +1,6 @@
 //目前有的五個技術分析，MA、EMA、MACD、RSI、KD
 
-const mysql = require('mysql')
-const path = require('path')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../../.env'),
-})
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
-
-const dbConfig = {
-  host: 'localhost',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
-const connection = mysql.createConnection({
-  ...dbConfig,
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
+const connection = require('../config/databaseConnect')
 
 const saveToDatabase = (stockId, weaklyAvg, avg20, avg60, ema, macd, rsi, k, d, date) => {
   return new Promise((resolve, reject) => {
@@ -108,8 +89,8 @@ const doQueries = async () => {
   try {
     const stockIds = ['1101']
     for (const stockId of stockIds) {
-      const query = `SELECT date, closing_price FROM stock_day_all WHERE stock_id = ${stockId} ORDER BY date ASC`
-      connection.query(query, async (err, results) => {
+      const query = 'SELECT date, closing_price FROM stock_day_all WHERE stock_id = ? ORDER BY date ASC'
+      connection.query(query, [stockId], async (err, results) => {
         if (err) throw err
         const dates = results.map((row) => row.date.toISOString().split('T')[0])
         const closingPrices = results.map((row) => parseFloat(row.closing_price))
@@ -127,17 +108,13 @@ const doQueries = async () => {
           promises.push(saveToDatabase(stockId, weaklyAvg[i] || null, avg20[i] || null, avg60[i] || null, ema[i] || null, macd[i] || null, rsi[i] || null, kdVal.k, kdVal.d, dates[i]))
         }
         await Promise.all(promises)
-        connection.end()
+        connection.pool.end()
       })
     }
   } catch (err) {
     console.error(err)
-    connection.end()
+    connection.pool.end()
   }
 }
 
-connection.connect((err) => {
-  if (err) throw err
-  console.log('Connected to the database.')
-  doQueries()
-})
+doQueries()

@@ -1,24 +1,5 @@
 //天氣和大盤指數的分析，有相關係數、月平均交易量、顯著水準、異常值。
-const mysql = require('mysql')
-const path = require('path')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../../.env'),
-})
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
-
-const dbConfig = {
-  host: 'localhost',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
-const connection = mysql.createConnection({
-  ...dbConfig,
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
+const connection = require('../config/databaseConnect')
 
 function pearsonCorrelation(x, y, significanceLevel = 0.05) {
   const n = x.length
@@ -71,26 +52,27 @@ const doQueries = async () => {
     console.log('Correlation between daily price and precipitation:', correlation)
 
     // Trend Analysis
-    connection.query('SELECT MONTH(date) as month, AVG(trade_volume) as avg_trade_volume FROM fmtqik GROUP BY MONTH(date)', (err, results) => {
-      if (err) throw err
-      console.log('Trend Analysis - Average Trade Volume per Month:', results)
+    await new Promise((resolve, reject) => {
+      connection.query('SELECT EXTRACT(MONTH FROM date) as month, AVG(trade_volume) as avg_trade_volume FROM fmtqik GROUP BY EXTRACT(MONTH FROM date)', (err, results) => {
+        if (err) return reject(err)
+        console.log('Trend Analysis - Average Trade Volume per Month:', results)
+        resolve()
+      })
     })
 
     // Anomaly Detection
-    connection.query('SELECT * FROM fmtqik WHERE trade_volume > (SELECT AVG(trade_volume) FROM fmtqik) * 1.5', (err, results) => {
-      if (err) throw err
-      console.log('Anomaly Detection - Number of High Trade Volume Records:', results.length)
+    await new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM fmtqik WHERE trade_volume > (SELECT AVG(trade_volume) FROM fmtqik) * 1.5', (err, results) => {
+        if (err) return reject(err)
+        console.log('Anomaly Detection - Number of High Trade Volume Records:', results.length)
+        resolve()
+      })
     })
   } catch (err) {
     console.error(err)
   } finally {
-    connection.end()
+    connection.pool.end()
   }
 }
 
-
-connection.connect((err) => {
-  if (err) throw err
-  console.log('Connected to the database.')
-  doQueries()
-})
+doQueries()

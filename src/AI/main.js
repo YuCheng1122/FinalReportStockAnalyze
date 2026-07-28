@@ -1,39 +1,15 @@
-const path = require('path')
-const mysql = require('mysql2')
 const OpenAI = require('openai')
 const moment = require('moment')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../.env'),
-})
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, OPENAI_API_KEY } = process.env
-
-const dbConfig = {
-  host: 'hkg1.clusters.zeabur.com',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-  apiKey: OPENAI_API_KEY,
+const { OPENAI_API_KEY } = process.env
+const connection = require('../config/databaseConnect')
+const queryAsync = (sql, params) => {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, params, (error, result) => {
+      if (error) reject(error)
+      else resolve(result)
+    })
+  })
 }
-// 設置MySQL連接
-const connection = mysql.createConnection({
-  host: 'hkg1.clusters.zeabur.com',
-  port: 32655,
-  user: 'root',
-  password: 'H2QgYE3xp81X9bCfL6noi7WT5V4Req0d',
-  database: 'school_project',
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
-
-// 連接到資料庫
-connection.connect((err) => {
-  if (err) {
-    console.error('Database connection failed: ' + err.stack)
-    return
-  }
-
-  console.log('Connected to database.')
-})
 
 // 設置OpenAI
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
@@ -101,7 +77,7 @@ async function insertSentimentResults(stockId, sentimentResults, titles) {
     if (result) {
       const title = titles.split(', ')[i - 1]
       const insertQuery = 'INSERT INTO sentiment_analysis (stock_id, title, sentiment, score, description, create_date, update_date) VALUES (?, ?, ?, ?, ?, NOW(), NOW())'
-      await connection.promise().query(insertQuery, [stockId, title, result.情緒, result.分數, result.說明])
+      await queryAsync(insertQuery, [stockId, title, result.情緒, result.分數, result.說明])
       console.log('Inserted data for title:', title)
     }
   }
@@ -109,7 +85,7 @@ async function insertSentimentResults(stockId, sentimentResults, titles) {
   const overallSentiment = sentimentResults['整體']
   if (overallSentiment) {
     const insertOverallQuery = 'INSERT INTO sentiment_analysis (stock_id, title, sentiment, score, description, create_date, update_date) VALUES (?, ?, ?, ?, ?, NOW(), NOW())'
-    await connection.promise().query(insertOverallQuery, [stockId, '整體分析', overallSentiment.情緒, overallSentiment.分數, overallSentiment.說明])
+    await queryAsync(insertOverallQuery, [stockId, '整體分析', overallSentiment.情緒, overallSentiment.分數, overallSentiment.說明])
     console.log('Inserted overall sentiment analysis')
   }
 }
@@ -117,7 +93,7 @@ async function insertSentimentResults(stockId, sentimentResults, titles) {
 //處理單一股票的函數
 async function processStock(stockId, date) {
   const query = 'SELECT title FROM individual_new WHERE stock_id = ? AND create_date >= ? AND create_date < ?'
-  const [results] = await connection.promise().query(query, [stockId, date, moment(date).add(1, 'day').format('YYYY-MM-DD')])
+  const results = await queryAsync(query, [stockId, date, moment(date).add(1, 'day').format('YYYY-MM-DD')])
 
   const allTitles = results.map((row) => row.title).join(', ')
   console.log(allTitles)
@@ -137,6 +113,6 @@ async function processStock(stockId, date) {
   } catch (err) {
     console.error('Error processing stocks:', err)
   } finally {
-    connection.end()
+    connection.pool.end()
   }
 })()

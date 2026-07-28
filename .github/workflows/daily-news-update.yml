@@ -1,0 +1,24 @@
+name: Daily news update
+
+# Original schedule (node-schedule, assumed Asia/Taipei local time): 00:00 daily.
+# GitHub Actions cron is always UTC, so 00:00 Asia/Taipei (UTC+8) -> 16:00 UTC (previous day).
+on:
+  schedule:
+    - cron: '0 16 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PGSSLMODE: ${{ secrets.PGSSLMODE }}
+      SERP_API_KEY: ${{ secrets.SERP_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install --omit=dev --ignore-scripts
+      - run: node src/scripts/updateNews.js

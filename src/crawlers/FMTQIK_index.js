@@ -1,24 +1,5 @@
-const path = require('path')
 const axios = require('axios')
-const mysql = require('mysql2')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../../.env'),
-})
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
-
-const dbConfig = {
-  host: 'localhost',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
-const connection = mysql.createConnection({
-  ...dbConfig,
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
+const connection = require('../config/databaseConnect')
 
 async function fetchDataForYears(startYear, endYear) {
   try {
@@ -63,7 +44,7 @@ async function fetchDataForYears(startYear, endYear) {
       }
     }
 
-    connection.end()
+    connection.pool.end()
   } catch (error) {
     console.error('Error fetching data:', error)
   }

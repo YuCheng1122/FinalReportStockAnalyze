@@ -1,25 +1,7 @@
-const path = require('path')
 const puppeteer = require('puppeteer')
-const mysql = require('mysql')
-const axios = require('axios')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../../../.env'),
-})
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
+const connection = require('../../config/databaseConnect')
 
 const url = 'https://news.google.com/topics/CAAqKggKIiRDQkFTRlFvSUwyMHZNRGx6TVdZU0JYcG9MVlJYR2dKVVZ5Z0FQAQ?hl=zh-TW&gl=TW&ceid=TW%3Azh-Hant'
-const dbConfig = {
-  host: 'localhost',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
-const connection = mysql.createConnection({
-  ...dbConfig,
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
 
 async function fetchData(url) {
   try {
@@ -67,7 +49,7 @@ async function fetchData(url) {
     }
 
     await browser.close()
-    connection.end()
+    connection.pool.end()
   } catch (error) {
     console.error('Error fetching data:', error)
   }

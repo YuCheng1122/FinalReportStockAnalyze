@@ -54,6 +54,23 @@ const expandBulkValues = (sql, params) => {
   return { sql: newSql, params: flatParams }
 }
 
+// mysql2 also lets you write `INSERT INTO table SET ?` and pass a plain object - each key
+// becomes a column. Postgres has no equivalent, so expand it into an explicit column list.
+const SET_OBJECT_RE = /^\s*INSERT\s+INTO\s+([\w."`]+)\s+SET\s*\?\s*;?\s*$/i
+
+const expandSetObject = (sql, params) => {
+  const match = sql.match(SET_OBJECT_RE)
+  if (!match) return null
+  const obj = params[0]
+  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) return null
+
+  const keys = Object.keys(obj)
+  const values = keys.map((key) => obj[key])
+  const placeholders = keys.map((_, i) => `$${i + 1}`)
+  const newSql = `INSERT INTO ${match[1]}(${keys.join(', ')}) VALUES (${placeholders.join(', ')})`
+  return { sql: newSql, params: values }
+}
+
 // Converts positional `?` placeholders (MySQL) to numbered `$1, $2, ...` (Postgres).
 const toPositionalParams = (sql) => {
   let i = 0
@@ -84,7 +101,11 @@ const query = (sql, paramsOrCallback, maybeCallback) => {
   if (wasInsertIgnore) pgSql = stripInsertIgnore(pgSql)
 
   let pgParams = params
-  if (BULK_VALUES_RE.test(pgSql.trim())) {
+  const setObjectExpanded = expandSetObject(pgSql, params)
+  if (setObjectExpanded) {
+    pgSql = setObjectExpanded.sql
+    pgParams = setObjectExpanded.params
+  } else if (BULK_VALUES_RE.test(pgSql.trim())) {
     const expanded = expandBulkValues(pgSql, params)
     if (expanded.empty) return callback(null, [])
     pgSql = expanded.sql

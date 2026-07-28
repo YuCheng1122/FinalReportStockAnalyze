@@ -1,14 +1,11 @@
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST } = process.env;
-
-const mysql = require("mysql2/promise");
-const connectionConfig = {
-  host: DB_HOST,
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
+const connection = require("../config/databaseConnect");
+const queryAsync = (sql, params) => {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, params, (error, result) => {
+      if (error) reject(error);
+      else resolve(result);
+    });
+  });
 };
 
 async function insertStockData(stockData) {
@@ -20,7 +17,6 @@ async function insertStockData(stockData) {
     insertStockData(stockDataArray).catch(console.error);
   });
 
-  const connection = await mysql.createConnection(connectionConfig);
   const sql = `
         INSERT INTO Stock (code, trade_value, opening_price, highest_price, lowest_price, closing_price, price_change, trade_volume, transaction, date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -30,7 +26,7 @@ async function insertStockData(stockData) {
 
   for (let data of stockData) {
     try {
-      await connection.execute(sql, [
+      await queryAsync(sql, [
         data.Code,
         data.TradeValue,
         data.OpeningPrice,
@@ -52,7 +48,7 @@ async function insertStockData(stockData) {
     }
   }
 
-  await connection.end();
+  connection.pool.end();
 }
 
 const fetchAllStockData = require("../crawlers/stock"); // 爬蟲檔案

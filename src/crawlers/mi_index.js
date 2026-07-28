@@ -1,25 +1,6 @@
-const path = require('path')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../../.env'),
-})
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 const axios = require('axios')
-const mysql = require('mysql2')
+const connection = require('../config/databaseConnect')
 const API_URL = 'https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX'
-
-const dbConfig = {
-  host: 'localhost',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
-const connection = mysql.createConnection({
-  ...dbConfig,
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
 
 async function fetchData() {
   try {
@@ -51,7 +32,7 @@ async function fetchData() {
         })
       })
 
-      connection.end()
+      connection.pool.end()
       console.log(results)
       return results
     } else {

@@ -1,24 +1,5 @@
-const path = require('path')
-require('dotenv').config({
-  path: path.resolve(__dirname, '../../.env'),
-})
-
-const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 const axios = require('axios')
-const mysql = require('mysql2')
-
-const dbConfig = {
-  host: 'localhost',
-  user: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-}
-
-const connection = mysql.createConnection({
-  ...dbConfig,
-  charset: 'utf8mb4',
-  collation: 'utf8mb4_unicode_ci',
-})
+const connection = require('../config/databaseConnect')
 
 /**
  * 以下為(不存在stock之id)
@@ -253,9 +234,9 @@ async function fetchYearlyData(year, stockCodes) {
 
 fetchAllData(stockCodes)
   .then(() => {
-    connection.end()
+    connection.pool.end()
   })
   .catch((error) => {
     console.error('An error occurred:', error)
-    connection.end()
+    connection.pool.end()
   })
