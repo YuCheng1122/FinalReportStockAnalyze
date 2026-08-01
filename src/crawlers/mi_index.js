@@ -21,16 +21,22 @@ async function fetchData() {
         }
       })
 
-      results.forEach((result) => {
-        const query = 'INSERT INTO mi_index SET ?'
-        connection.query(query, result, (error, results, fields) => {
-          if (error) {
-            console.error('Error inserting data:', error)
-            return
-          }
-          console.log('Inserted:', results.insertId)
-        })
-      })
+      await Promise.all(
+        results.map(
+          (result) =>
+            new Promise((resolve) => {
+              const query = 'INSERT INTO mi_index SET ?'
+              connection.query(query, result, (error) => {
+                if (error) {
+                  console.error('Error inserting data:', error)
+                } else {
+                  console.log('Inserted index:', result.index)
+                }
+                resolve()
+              })
+            })
+        )
+      )
 
       connection.pool.end()
       console.log(results)

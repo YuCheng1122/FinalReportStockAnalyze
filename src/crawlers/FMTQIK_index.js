@@ -24,16 +24,20 @@ async function fetchDataForYears(startYear, endYear) {
             }
           })
 
-          results.forEach((result) => {
-            const query = 'INSERT INTO FMTQIK SET ?'
-            connection.query(query, result, (error, results, fields) => {
-              if (error) {
-                console.error('Error inserting data:', error)
-                return
-              }
-              console.log('Inserted:', results.insertId)
-            })
-          })
+          await Promise.all(
+            results.map(
+              (result) =>
+                new Promise((resolve) => {
+                  const query = 'INSERT INTO FMTQIK SET ?'
+                  connection.query(query, result, (error) => {
+                    if (error) {
+                      console.error('Error inserting data:', error)
+                    }
+                    resolve()
+                  })
+                })
+            )
+          )
 
           console.log(`Data for ${year}-${monthStr} fetched successfully`)
         } else {
